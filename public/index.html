@@ -1,0 +1,132 @@
+<!doctype html><html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Epic Bot</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1f;--card:#151a36;--line:#262d5a;--tx:#f2f0ff;--mu:#8b92c4;--or:#ff8a1f;--mint:#3ddc97;--rose:#ff5d73;--vi:#7c5cff;color-scheme:dark}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font:500 16px Fredoka,system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh;padding:env(safe-area-inset-top) 0 calc(78px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+.wrap{max-width:520px;margin:0 auto;padding:14px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.ava{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--vi),#3b82f6);display:grid;place-items:center;font-weight:700;font-size:20px}
+.top small{color:var(--mu);display:block;font-size:13px}.top b{font-size:26px;font-weight:700}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;margin-bottom:10px}
+.chip{flex:none;padding:7px 13px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:14px}
+.hi{color:var(--mint)}.lo{color:var(--rose)}
+.tile{position:relative;height:150px;border-radius:26px;margin-bottom:12px;padding:18px;overflow:hidden;display:flex;align-items:flex-end;font-size:30px;font-weight:700;width:100%;text-align:left}
+.t1{background:linear-gradient(135deg,#ff8a1f,#ff4d6d 55%,#7c5cff)}
+.t1 img{position:absolute;right:-6px;top:10px;height:130px;filter:drop-shadow(0 8px 14px #0006);transform:rotate(-6deg)}
+.t2{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#3b2400;opacity:.9}.t3{background:linear-gradient(135deg,#3b1d9e,#7c5cff);opacity:.9}
+.tag{position:absolute;left:18px;top:16px;background:#fff;color:#1b1446;font-size:13px;font-weight:700;padding:4px 11px;border-radius:99px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#0d1228ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+nav button{background:none;padding:7px 18px;border-radius:16px;color:var(--mu);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button i{font-style:normal;font-size:22px}nav button.on{background:#7c5cff33;color:#fff}
+section{display:none}section.on{display:block}
+/* crash */
+.stage{position:relative;height:340px;border-radius:28px;overflow:hidden;border:1px solid var(--line);margin-bottom:12px;
+ background:url(bg.jpg) center/cover,radial-gradient(ellipse at 20% 100%,#3a1c7a,transparent 60%),radial-gradient(ellipse at 90% 0,#14307a,transparent 55%),#080b1c}
+#stars{position:absolute;inset:0;width:100%;height:100%}
+.rocket{position:absolute;width:150px;left:8%;bottom:6%;transition:none;will-change:transform,left,bottom;filter:drop-shadow(0 10px 18px #000a)}
+.rocket.boom{animation:boom .7s forwards}
+@keyframes boom{to{transform:translate(160px,-260px) rotate(50deg) scale(.4);opacity:0}}
+.mx{position:absolute;left:0;right:0;top:20px;text-align:center;font-size:62px;font-weight:700;text-shadow:0 4px 24px #0008}
+.mx.lose{color:var(--rose)}.mx.win{color:var(--mint)}
+.msg{position:absolute;left:0;right:0;top:92px;text-align:center;color:var(--mu);font-size:15px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px}
+.row{display:flex;gap:8px;margin-bottom:10px}
+input{flex:1;min-width:0;background:#0c1030;border:1px solid var(--line);color:var(--tx);border-radius:14px;padding:13px;font:600 18px Fredoka,sans-serif}
+.q{background:#0c1030;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px}
+.go{width:100%;padding:17px;border-radius:20px;font-size:20px;font-weight:700;background:linear-gradient(90deg,#ff8a1f,#ff4d6d);box-shadow:0 8px 28px #ff6a3d55}
+.go.cash{background:linear-gradient(90deg,#22c58b,#3ddc97);color:#032a1c;box-shadow:0 8px 28px #3ddc9755}.go:disabled{opacity:.5}
+h2{font-size:22px;margin:4px 0 12px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 14px;background:var(--card);border:1px solid var(--line);border-radius:18px;margin-bottom:8px}
+.item small{color:var(--mu);display:block}.btn2{background:var(--vi);padding:9px 16px;border-radius:12px;font-weight:600}.btn2:disabled{background:#333a66}
+#toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-90px);background:#fff;color:#14172e;padding:11px 20px;border-radius:14px;font-weight:600;transition:.3s;z-index:9}
+#toast.on{transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){.rocket.boom{animation:none;opacity:0}}
+</style></head><body>
+<div id="toast"></div>
+<div class="wrap">
+<div class="top"><div class="ava" id="ava">?</div><div><small>Demo balans</small><b>⭐ <span id="bal">0</span></b></div></div>
+
+<section id="home" class="on">
+ <div class="chips" id="hist1"></div>
+ <button class="tile t1" onclick="go('crash')"><span class="tag">🔥 HIT</span>RAKETA<img src="rocket.png" alt=""></button>
+ <button class="tile t2" onclick="toast('Tez orada')"><span class="tag">⚡ YANGI</span>PVP HUB</button>
+ <button class="tile t3" onclick="toast('Tez orada')">PLAY HUB</button>
+</section>
+
+<section id="crash">
+ <div class="chips" id="hist2"></div>
+ <div class="stage" id="stage"><canvas id="stars"></canvas>
+  <div class="mx" id="mx">1.00x</div><div class="msg" id="msg">Stavka qiling va raketani uchiring</div>
+  <img class="rocket" id="rk" src="rocket.png" alt="Raketa"></div>
+ <div class="panel">
+  <div class="row"><input id="amt" type="number" inputmode="numeric" value="1000" min="1000">
+   <button class="q" onclick="setA(1000)">1k</button><button class="q" onclick="setA(5000)">5k</button><button class="q" onclick="setA(0)">MAX</button></div>
+  <button class="go" id="btn" onclick="act()">Stavka qilish</button>
+ </div>
+</section>
+
+<section id="top"><h2>Reyting</h2><div id="toplist"></div></section>
+<section id="rew"><h2>Mukofot</h2>
+ <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
+ <h2>Konkurslar</h2><div id="cons"></div></section>
+</div>
+<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>🎁</i>Mukofot</button></nav>
+
+<script>
+const tg=window.Telegram&&Telegram.WebApp,tu=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
+if(tg){tg.ready();tg.expand()}
+let uid=tu?'tg'+tu.id:localStorage.uid||(localStorage.uid='g'+Math.random().toString(36).slice(2,10));
+const $=id=>document.getElementById(id),fmt=n=>Math.floor(n).toLocaleString('ru');
+const api=(p,b)=>fetch('/api/'+p,{method:b?'POST':'GET',headers:{'content-type':'application/json','x-uid':uid},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error||'Xato';return j});
+let bal=0,state='idle',t0=0,poll=0,raf=0,lastM=1;
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)}
+function setBal(v){bal=v;$('bal').textContent=fmt(v)}
+function setA(v){$('amt').value=v||bal}
+function go(p){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==p));
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||(p=='crash'&&b.dataset.p=='home')));
+ if(p=='home'||p=='crash')hist();if(p=='top')top();if(p=='rew')cons()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+const chipHTML=a=>a.map(x=>`<div class="chip ${x>=2?'hi':'lo'}">${x.toFixed(2)}x</div>`).join('');
+async function hist(){const h=await api('history');$('hist1').innerHTML=$('hist2').innerHTML=chipHTML(h)}
+async function top(){const l=await api('top');$('toplist').innerHTML=l.map((u,i)=>`<div class="item"><span>${['🥇','🥈','🥉'][i]||i+1+'.'} ${esc(u.name)}</span><b>⭐ ${fmt(u.balance)}</b></div>`).join('')||'<p style="color:var(--mu)">Hozircha bo\'sh</p>'}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function cons(){const l=await api('contests');$('cons').innerHTML=l.map(c=>`<div class="item"><div><b>${esc(c.title)}</b><small>Sovrin ⭐ ${fmt(c.prize)} · ${c.count} ishtirokchi${c.done?' · G\'olib: '+esc(c.winner):''}</small></div>
+ <button class="btn2" ${c.done||c.joined?'disabled':''} onclick="join('${c.id}')">${c.done?'Yopilgan':c.joined?'Qatnashyapsiz':'Qatnashish'}</button></div>`).join('')||'<p style="color:var(--mu)">Hozircha konkurs yo\'q</p>'}
+async function join(id){try{await api('contests/join',{id});toast('Qatnashyapsiz!');cons()}catch(e){toast(e)}}
+async function promo(){try{const r=await api('promo',{code:$('pc').value});setBal(r.balance);toast('+'+fmt(r.amount)+' ⭐ qo\'shildi');$('pc').value=''}catch(e){toast(e)}}
+
+/* ---- Crash ---- */
+function place(m){const p=Math.min(1,Math.log(m)/Math.log(25)),r=$('rk');
+ r.style.left=(8+p*52)+'%';r.style.bottom=(6+p*52)+'%';
+ r.style.transform=`rotate(${-4-p*6}deg) translateY(${Math.sin(performance.now()/180)*4}px)`}
+function ui(){const b=$('btn');b.disabled=false;
+ if(state=='run'){b.textContent='Olish ⭐ '+fmt(bet*lastM);b.className='go cash'}else{b.textContent='Stavka qilish';b.className='go'}}
+let bet=0;
+function tick(){if(state!='run')return;lastM=Math.max(1,Math.exp(0.1*(performance.now()-t0)/1000));
+ $('mx').textContent=(Math.floor(lastM*100)/100).toFixed(2)+'x';place(lastM);ui();raf=requestAnimationFrame(tick)}
+async function act(){
+ if(state=='run'){const b=$('btn');b.disabled=true;try{end(await api('cash',{}))}catch(e){toast(e)}return}
+ try{bet=Math.floor(+$('amt').value);const r=await api('bet',{amount:bet});setBal(r.balance);
+  $('rk').classList.remove('boom');$('mx').className='mx';$('msg').textContent='';state='run';t0=performance.now();lastM=1;
+  clearInterval(poll);poll=setInterval(sync,250);tick()}catch(e){toast(e)}}
+async function sync(){if(state!='run')return;try{const s=await api('status');
+ if(s.state=='run')t0=performance.now()-s.elapsed;else if(s.state=='crashed')end(s)}catch{}}
+function end(r){if(state!='run')return;state='idle';clearInterval(poll);cancelAnimationFrame(raf);
+ const x=$('mx');
+ if(r.state=='won'){setBal(r.balance);x.textContent=r.m.toFixed(2)+'x';x.className='mx win';$('msg').textContent='Yutuq: +'+fmt(r.win-bet)+' ⭐ · raketa '+r.crash.toFixed(2)+'x da yonardi'}
+ else{x.textContent=r.crash.toFixed(2)+'x';x.className='mx lose';$('msg').textContent='Raketa portladi';$('rk').classList.add('boom');
+  setTimeout(()=>{$('rk').classList.remove('boom');place(1)},900)}
+ ui();hist()}
+/* yulduzlar */
+(function(){const c=$('stars'),x=c.getContext('2d');let S=[];
+ function size(){c.width=c.clientWidth;c.height=c.clientHeight;S=Array.from({length:60},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.6+.3,v:Math.random()*.25+.05}))}
+ addEventListener('resize',size);size();
+ (function f(){x.clearRect(0,0,c.width,c.height);x.fillStyle='#fff9';S.forEach(s=>{s.y+=s.v*(state=='run'?4:1);if(s.y>c.height)s.y=0;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});requestAnimationFrame(f)})()})();
+
+(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').textContent=(u.name||'?')[0].toUpperCase();place(1);hist()}catch(e){toast(e)}})();
+</script></body></html>
