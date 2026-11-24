@@ -43,11 +43,13 @@ input{flex:1;min-width:0;background:#0c1030;border:1px solid var(--line);color:v
 h2{font-size:22px;margin:4px 0 12px}
 .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 14px;background:var(--card);border:1px solid var(--line);border-radius:18px;margin-bottom:8px}
 .item small{color:var(--mu);display:block}.btn2{background:var(--vi);padding:9px 16px;border-radius:12px;font-weight:600}.btn2:disabled{background:#333a66}
+#err{margin:10px 14px;padding:12px 14px;border-radius:14px;background:#4a1f2c;color:#ffb3c0;font-size:14px}
 #toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-90px);background:#fff;color:#14172e;padding:11px 20px;border-radius:14px;font-weight:600;transition:.3s;z-index:9}
 #toast.on{transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){.rocket.boom{animation:none;opacity:0}}
 </style></head><body>
 <div id="toast"></div>
+<div id="err" style="display:none"></div>
 <div class="wrap">
 <div class="top"><div class="ava" id="ava">?</div><div><small>Demo balans</small><b>⭐ <span id="bal">0</span></b></div></div>
 
@@ -71,11 +73,11 @@ h2{font-size:22px;margin:4px 0 12px}
 </section>
 
 <section id="top"><h2>Reyting</h2><div id="toplist"></div></section>
-<section id="rew"><h2>Mukofot</h2>
+<section id="rew"><h2>Vazifalar</h2><div id="tasks"></div><h2 style="margin-top:18px">Promokod</h2>
  <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
- <h2>Konkurslar</h2><div id="cons"></div></section>
+ <h2 style="margin-top:18px">Konkurslar</h2><div id="cons"></div></section>
 </div>
-<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>🎁</i>Mukofot</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><i>⚙️</i>Admin</button></nav>
+<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>📋</i>Vazifalar</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><i>⚙️</i>Admin</button></nav>
 
 <script>
 const tg=window.Telegram&&Telegram.WebApp,tu=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
@@ -89,14 +91,19 @@ function setBal(v){bal=v;$('bal').textContent=fmt(v)}
 function setA(v){$('amt').value=v||bal}
 function go(p){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==p));
  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||(p=='crash'&&b.dataset.p=='home')));
- if(p=='home'||p=='crash')hist();if(p=='top')top();if(p=='rew')cons()}
+ if(p=='home'||p=='crash')hist();if(p=='top')loadTop();if(p=='rew')loadRew()}
 document.querySelectorAll('nav button[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
 const chipHTML=a=>a.map(x=>`<div class="chip ${x>=2?'hi':'lo'}">${x.toFixed(2)}x</div>`).join('');
 async function hist(){const h=await api('history');$('hist1').innerHTML=$('hist2').innerHTML=chipHTML(h)}
-async function top(){const l=await api('top');$('toplist').innerHTML=l.map((u,i)=>`<div class="item"><span>${['🥇','🥈','🥉'][i]||i+1+'.'} ${esc(u.name)}</span><b>⭐ ${fmt(u.balance)}</b></div>`).join('')||'<p style="color:var(--mu)">Hozircha bo\'sh</p>'}
+async function loadTop(){const l=await api('top');$('toplist').innerHTML=l.map((u,i)=>`<div class="item"><span>${['🥇','🥈','🥉'][i]||i+1+'.'} ${esc(u.name)}</span><b>⭐ ${fmt(u.balance)}</b></div>`).join('')||'<p style="color:var(--mu)">Hozircha bo\'sh</p>'}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function cons(){const l=await api('contests');$('cons').innerHTML=l.map(c=>`<div class="item"><div><b>${esc(c.title)}</b><small>Sovrin ⭐ ${fmt(c.prize)} · ${c.count} ishtirokchi${c.done?' · G\'olib: '+esc(c.winner):''}</small></div>
  <button class="btn2" ${c.done||c.joined?'disabled':''} onclick="join('${c.id}')">${c.done?'Yopilgan':c.joined?'Qatnashyapsiz':'Qatnashish'}</button></div>`).join('')||'<p style="color:var(--mu)">Hozircha konkurs yo\'q</p>'}
+function loadRew(){tasks();cons()}
+const left=ms=>{const m=Math.ceil(ms/60000);return Math.floor(m/60)+' soat '+m%60+' daq'};
+async function tasks(){const l=await api('tasks');$('tasks').innerHTML=l.map(t=>`<div class="item"><div><b>${esc(t.title)}</b><small>${esc(t.desc)} · +${fmt(t.reward)} ⭐${t.need?' · '+t.progress+'/'+t.need:''}</small></div>
+ <button class="btn2" ${t.status=='ready'?'':'disabled'} onclick="claim('${t.id}')">${{ready:'Olish',wait:left(t.left),todo:'Jarayonda',done:'Bajarildi'}[t.status]}</button></div>`).join('')}
+async function claim(id){try{const r=await api('tasks/claim',{id});setBal(r.balance);toast('+'+fmt(r.reward)+' ⭐ qo\'shildi');tasks()}catch(e){toast(e)}}
 async function join(id){try{await api('contests/join',{id});toast('Qatnashyapsiz!');cons()}catch(e){toast(e)}}
 async function promo(){try{const r=await api('promo',{code:$('pc').value});setBal(r.balance);toast('+'+fmt(r.amount)+' ⭐ qo\'shildi');$('pc').value=''}catch(e){toast(e)}}
 
@@ -128,5 +135,5 @@ function end(r){if(state!='run')return;state='idle';clearInterval(poll);cancelAn
  addEventListener('resize',size);size();
  (function f(){x.clearRect(0,0,c.width,c.height);x.fillStyle='#fff9';S.forEach(s=>{s.y+=s.v*(state=='run'?4:1);if(s.y>c.height)s.y=0;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});requestAnimationFrame(f)})()})();
 
-(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').textContent=(u.name||'?')[0].toUpperCase();place(1);hist();api('is-admin').then(r=>{if(r.admin)$('adm').style.display='flex'}).catch(()=>{})}catch(e){toast(e)}})();
+(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').textContent=(u.name||'?')[0].toUpperCase();place(1);hist();$('err').style.display='none';api('is-admin').then(r=>{if(r.admin)$('adm').style.display='flex'}).catch(()=>{})}catch(e){const r=$('err');r.style.display='block';r.innerHTML='Ulanishda xato: '+esc(e)+' <button class="btn2" onclick="location.reload()">Qayta urinish</button>'}})();
 </script></body></html>
