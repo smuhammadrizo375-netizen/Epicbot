@@ -75,14 +75,14 @@ h2{font-size:22px;margin:4px 0 12px}
  <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
  <h2>Konkurslar</h2><div id="cons"></div></section>
 </div>
-<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>🎁</i>Mukofot</button></nav>
+<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>🎁</i>Mukofot</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><i>⚙️</i>Admin</button></nav>
 
 <script>
 const tg=window.Telegram&&Telegram.WebApp,tu=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
 if(tg){tg.ready();tg.expand()}
 let uid=tu?'tg'+tu.id:localStorage.uid||(localStorage.uid='g'+Math.random().toString(36).slice(2,10));
 const $=id=>document.getElementById(id),fmt=n=>Math.floor(n).toLocaleString('ru');
-const api=(p,b)=>fetch('/api/'+p,{method:b?'POST':'GET',headers:{'content-type':'application/json','x-uid':uid},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error||'Xato';return j});
+const api=(p,b)=>fetch('/api/'+p,{method:b?'POST':'GET',headers:{'content-type':'application/json','x-uid':uid,'x-init':tg?tg.initData:''},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error||'Xato';return j});
 let bal=0,state='idle',t0=0,poll=0,raf=0,lastM=1;
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)}
 function setBal(v){bal=v;$('bal').textContent=fmt(v)}
@@ -90,7 +90,7 @@ function setA(v){$('amt').value=v||bal}
 function go(p){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==p));
  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||(p=='crash'&&b.dataset.p=='home')));
  if(p=='home'||p=='crash')hist();if(p=='top')top();if(p=='rew')cons()}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+document.querySelectorAll('nav button[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
 const chipHTML=a=>a.map(x=>`<div class="chip ${x>=2?'hi':'lo'}">${x.toFixed(2)}x</div>`).join('');
 async function hist(){const h=await api('history');$('hist1').innerHTML=$('hist2').innerHTML=chipHTML(h)}
 async function top(){const l=await api('top');$('toplist').innerHTML=l.map((u,i)=>`<div class="item"><span>${['🥇','🥈','🥉'][i]||i+1+'.'} ${esc(u.name)}</span><b>⭐ ${fmt(u.balance)}</b></div>`).join('')||'<p style="color:var(--mu)">Hozircha bo\'sh</p>'}
@@ -128,5 +128,5 @@ function end(r){if(state!='run')return;state='idle';clearInterval(poll);cancelAn
  addEventListener('resize',size);size();
  (function f(){x.clearRect(0,0,c.width,c.height);x.fillStyle='#fff9';S.forEach(s=>{s.y+=s.v*(state=='run'?4:1);if(s.y>c.height)s.y=0;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});requestAnimationFrame(f)})()})();
 
-(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').textContent=(u.name||'?')[0].toUpperCase();place(1);hist()}catch(e){toast(e)}})();
+(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').textContent=(u.name||'?')[0].toUpperCase();place(1);hist();api('is-admin').then(r=>{if(r.admin)$('adm').style.display='flex'}).catch(()=>{})}catch(e){toast(e)}})();
 </script></body></html>
