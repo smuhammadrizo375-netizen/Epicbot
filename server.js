@@ -36,10 +36,13 @@ app.get('/api/is-admin',(q,s)=>s.json({admin:isAdm(q)}));
 const TGURL=process.env.WEBAPP_URL||process.env.RENDER_EXTERNAL_URL,WH=crypto.createHash('sha256').update(TOKEN).digest('hex').slice(0,32);
 const tgApi=(m,b)=>fetch(`https://api.telegram.org/bot${TOKEN}/${m}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json());
 if(TOKEN&&TGURL){
+  const esc=x=>String(x||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   app.post('/tg/'+WH,(q,s)=>{s.sendStatus(200);const m=q.body.message;
-    if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,text:'🚀 Epic Bot — demo o\'yin (haqiqiy pul yo\'q).\nRaketani uchiring, promokod kiriting, konkurslarda qatnashing!',
-      reply_markup:{inline_keyboard:[[{text:'🎮 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
+    if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,parse_mode:'HTML',
+      text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b>!\n\n🚀 <b>Epic Raketa</b> — demo o\'yin. Haqiqiy pul yo\'q, faqat o\'yin uchun ⭐.\n\n🎁 Boshlang\'ich balans: <b>10 000 ⭐</b>\n🎯 Minimal stavka: <b>1 000 ⭐</b>\n📋 Vazifalarni bajaring, promokod kiriting va konkurslarda qatnashing!\n\nBoshlash uchun pastdagi tugmani bosing 👇`,
+      reply_markup:{inline_keyboard:[[{text:'🚀 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
   tgApi('setWebhook',{url:TGURL+'/tg/'+WH}).then(r=>console.log('webhook',r.ok)).catch(console.error);
+  tgApi('setMyCommands',{commands:[{command:'start',description:'O\'yinni boshlash'}]}).catch(()=>{});
   tgApi('setChatMenuButton',{menu_button:{type:'web_app',text:'O\'ynash',web_app:{url:TGURL}}}).catch(()=>{});
 }
 
@@ -71,6 +74,20 @@ app.get('/api/contests',auth,(q,s)=>s.json(Object.values(db.contests).map(c=>({i
 app.post('/api/contests/join',auth,(q,s)=>{const c=db.contests[q.body.id];
   if(!c||c.done)return s.status(400).json({error:'Konkurs yopilgan'});
   if(!c.players.includes(q.u.id))c.players.push(q.u.id);save();s.json({ok:1})});
+
+// ---------- VAZIFALAR ----------
+const TASKS=[
+ {id:'daily',title:'Kunlik bonus',desc:'Har 24 soatda bir marta',reward:2000,repeat:24*3600e3},
+ {id:'g5',title:'5 ta o\'yin o\'ynang',desc:'Raketada jami 5 ta stavka qiling',reward:5000,need:5},
+ {id:'g25',title:'25 ta o\'yin o\'ynang',desc:'Raketada jami 25 ta stavka qiling',reward:25000,need:25}];
+function taskState(u){u.claimed=u.claimed||{};return TASKS.map(t=>{const last=u.claimed[t.id]||0;let st,left=0;
+  if(t.repeat){left=Math.max(0,last+t.repeat-Date.now());st=left?'wait':'ready'}
+  else st=last?'done':((u.games||0)>=t.need?'ready':'todo');
+  return{id:t.id,title:t.title,desc:t.desc,reward:t.reward,status:st,left,need:t.need||null,progress:t.need?Math.min(u.games||0,t.need):null}})}
+app.get('/api/tasks',auth,(q,s)=>s.json(taskState(q.u)));
+app.post('/api/tasks/claim',auth,(q,s)=>{const t=TASKS.find(x=>x.id===q.body.id),st=t&&taskState(q.u).find(x=>x.id===t.id);
+  if(!st||st.status!=='ready')return s.status(400).json({error:'Vazifa hali bajarilmagan'});
+  q.u.claimed[t.id]=Date.now();q.u.balance+=t.reward;save();s.json({balance:q.u.balance,reward:t.reward})});
 
 // ---------- ADMIN ----------
 const A='/api/admin';
