@@ -15,11 +15,18 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;margin-bottom:10px}
 .chip{flex:none;padding:7px 13px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:14px}
 .hi{color:var(--mint)}.lo{color:var(--rose)}
-.tile{position:relative;height:150px;border-radius:26px;margin-bottom:12px;padding:18px;overflow:hidden;display:flex;align-items:flex-end;font-size:30px;font-weight:700;width:100%;text-align:left}
-.t1{background:linear-gradient(135deg,#ff8a1f,#ff4d6d 55%,#7c5cff)}
-.t1 img{position:absolute;right:-6px;top:10px;height:130px;filter:drop-shadow(0 8px 14px #0006);transform:rotate(-6deg)}
-.t2{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#3b2400;opacity:.9}.t3{background:linear-gradient(135deg,#3b1d9e,#7c5cff);opacity:.9}
-.tag{position:absolute;left:18px;top:16px;background:#fff;color:#1b1446;font-size:13px;font-weight:700;padding:4px 11px;border-radius:99px}
+.tile{position:relative;aspect-ratio:3.5;border-radius:26px;margin-bottom:12px;padding:0;overflow:hidden;display:block;width:100%;text-align:left;color:#fff}
+.tile>img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tag{position:absolute;left:12px;top:12px;background:#fff;color:#1b1446;font-size:13px;font-weight:700;padding:4px 11px;border-radius:99px;z-index:3}
+.ttl{position:absolute;left:10px;bottom:9px;font-size:20px;font-weight:700;background:#0a0e1f77;backdrop-filter:blur(4px);padding:3px 12px;border-radius:12px;z-index:3}
+.mxt{position:absolute;transform:translate(-50%,-50%) rotate(var(--r));font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 3px #0006;z-index:2;white-space:nowrap;pointer-events:none}
+/* PVP (pvp.jpg bo'lmasa shu chizma ko'rinadi) */
+.t2{background:linear-gradient(120deg,#ffb000,#ffcb3a 60%,#ffe27a)}
+.pc{position:absolute;border-radius:18px;box-shadow:0 8px 18px #0003}
+.solo{right:96px;top:22px;width:104px;height:88px;background:linear-gradient(160deg,#ffc83d,#ff9d00);border:2px solid #ffe08a;transform:rotate(-4deg)}
+.solo .av{position:absolute;border-radius:50%;display:grid;place-items:center;border:2px solid #fff8;font-size:16px}
+.vs{right:-14px;top:14px;width:120px;height:100px;background:linear-gradient(110deg,#1e6bff 0 49%,#ff4d2e 51%);transform:rotate(5deg);display:grid;place-items:center;font-size:38px;font-weight:700;font-style:italic;text-shadow:0 3px 10px #0005}
+.lab{position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);background:#d98300;color:#fff;font-size:12px;font-style:normal;padding:2px 12px;border-radius:10px;font-weight:700}
 nav{position:fixed;bottom:0;left:0;right:0;background:#0d1228ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
 nav button{background:none;padding:7px 18px;border-radius:16px;color:var(--mu);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button i{font-style:normal;font-size:22px}nav button.on{background:#7c5cff33;color:#fff}
@@ -55,9 +62,21 @@ h2{font-size:22px;margin:4px 0 12px}
 
 <section id="home" class="on">
  <div class="chips" id="hist1"></div>
- <button class="tile t1" onclick="go('crash')"><span class="tag">🔥 HIT</span>RAKETA<img src="rocket.png" alt=""></button>
- <button class="tile t2" onclick="toast('Tez orada')"><span class="tag">⚡ YANGI</span>PVP HUB</button>
- <button class="tile t3" onclick="toast('Tez orada')">PLAY HUB</button>
+ <button class="tile t1" onclick="go('crash')"><img class="bg" src="raketa.jpg" alt="">
+  <span class="mxt" style="left:59.4%;top:18.6%;--r:30deg">x2.28</span>
+  <span class="mxt" style="left:92.3%;top:46.8%;--r:-25deg">x1.12</span>
+  <span class="tag">🔥 HIT</span><span class="ttl">🚀 RAKETA</span></button>
+ <button class="tile t2" onclick="toast('Tez orada')">
+  <div class="pc solo"><span style="position:absolute;left:0;right:0;top:-16px;text-align:center;font-size:22px">👑</span>
+   <span class="av" style="left:6px;top:34px;width:28px;height:28px;background:#ffe9b0">🐱</span>
+   <span class="av" style="left:30px;top:10px;width:44px;height:44px;background:#222">😎</span>
+   <span class="av" style="right:6px;top:34px;width:28px;height:28px;background:#7a1f1f">🥷</span>
+   <b style="position:absolute;left:0;right:0;top:60px;text-align:center;font-size:13px">39.5%</b><i class="lab">SOLO</i></div>
+  <div class="pc vs">VS<i class="lab" style="background:#c0301c">TEAM</i></div>
+  <img class="bg" src="pvp.jpg" alt="" onerror="this.remove()">
+  <span class="tag">⚡ YANGI</span><span class="ttl">⚔️ PVP HUB</span></button>
+ <button class="tile t3" onclick="toast('Tez orada')"><img class="bg" src="play.jpg" alt="">
+  <span class="ttl">🎮 PLAY HUB</span></button>
 </section>
 
 <section id="crash">
@@ -106,6 +125,8 @@ async function tasks(){const l=await api('tasks');$('tasks').innerHTML=l.map(t=>
 async function claim(id){try{const r=await api('tasks/claim',{id});setBal(r.balance);toast('+'+fmt(r.reward)+' ⭐ qo\'shildi');tasks()}catch(e){toast(e)}}
 async function join(id){try{await api('contests/join',{id});toast('Qatnashyapsiz!');cons()}catch(e){toast(e)}}
 async function promo(){try{const r=await api('promo',{code:$('pc').value});setBal(r.balance);toast('+'+fmt(r.amount)+' ⭐ qo\'shildi');$('pc').value=''}catch(e){toast(e)}}
+/* Raketa bannerdagi yorliqlar */
+setInterval(()=>document.querySelectorAll('.mxt').forEach(e=>e.textContent='x'+(1+Math.random()*Math.random()*8).toFixed(2)),2400);
 
 /* ---- Crash ---- */
 function place(m){const p=Math.min(1,Math.log(m)/Math.log(25)),r=$('rk');
