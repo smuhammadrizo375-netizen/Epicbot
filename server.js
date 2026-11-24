@@ -39,7 +39,7 @@ if(TOKEN&&TGURL){
   const esc=x=>String(x||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   app.post('/tg/'+WH,(q,s)=>{s.sendStatus(200);const m=q.body.message;
     if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,parse_mode:'HTML',
-      text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b>!\n\n🚀 <b>Epic Raketa</b> — demo o\'yin. Haqiqiy pul yo\'q, faqat o\'yin uchun ⭐.\n\n🎁 Boshlang\'ich balans: <b>10 000 ⭐</b>\n🎯 Minimal stavka: <b>1 000 ⭐</b>\n📋 Vazifalarni bajaring, promokod kiriting va konkurslarda qatnashing!\n\nBoshlash uchun pastdagi tugmani bosing 👇`,
+            text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b> ✨\n\n🚀 Bu <b>epic fake bot</b> 🎮\n\nO'ynash uchun pastdagi tugmani bosing 👇`,
       reply_markup:{inline_keyboard:[[{text:'🚀 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
   tgApi('setWebhook',{url:TGURL+'/tg/'+WH}).then(r=>console.log('webhook',r.ok)).catch(console.error);
   tgApi('setMyCommands',{commands:[{command:'start',description:'O\'yinni boshlash'}]}).catch(()=>{});
