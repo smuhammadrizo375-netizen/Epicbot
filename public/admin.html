@@ -1,40 +1,61 @@
-<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin panel</title><style>
-:root{color-scheme:dark;--bg:#0a0e1f;--card:#151a36;--line:#262d5a;--mu:#8b92c4;--or:#ff8a1f}
-*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:#f2f0ff;padding:16px}
-.w{max-width:980px;margin:auto}h1{font-size:22px}h3{margin:0 0 10px}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
-.c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}.c small{color:var(--mu)}.c b{display:block;font-size:22px;margin-top:4px}
-input,button{font:inherit;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#0c1030;color:inherit}
-button{background:var(--or);color:#2b1300;border:0;font-weight:600;cursor:pointer}button.d{background:#3a2040;color:#ff9aa8}
-.f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mu);font-weight:500}
-.tb{display:flex;gap:6px;margin:16px 0;flex-wrap:wrap}.tb button{background:var(--card);color:#fff;border:1px solid var(--line)}.tb button.on{background:var(--or);color:#2b1300}
-.p{display:none;overflow-x:auto}.p.on{display:block}
+<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Admin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--card:#151a36;--line:#262d5a;--mu:#8b92c4;--vi:#7c5cff}
+*{box-sizing:border-box;margin:0}
+body{font:500 16px Fredoka,system-ui,sans-serif;background:#000;color:#f2f0ff;padding:14px;min-height:100dvh}
+.w{max-width:520px;margin:auto}h1{font-size:24px;margin:6px 0 14px}h2{font-size:20px;margin:10px 0}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mb{border:1px solid var(--line);border-radius:22px;padding:20px 10px;color:#fff;font:600 16px Fredoka,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 18px #0008;background:linear-gradient(135deg,#2a2060,#14123a)}
+.mb i{font-style:normal;font-size:38px}.mb:active{transform:scale(.97)}
+.mb.g{background:linear-gradient(135deg,#1c7a52,#0f3d2b)}.mb.o{background:linear-gradient(135deg,#a8501a,#4a2410)}.mb.p{background:linear-gradient(135deg,#a03a7a,#40163a)}.mb.b{background:linear-gradient(135deg,#1e5fd0,#10285a)}
+.back{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;color:#fff;font:600 15px Fredoka,system-ui,sans-serif;cursor:pointer;margin-bottom:6px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.c small{color:var(--mu);display:block}.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g2 b{font-size:22px;display:block;margin-top:4px}
+input{width:100%;background:#0c1030;border:1px solid var(--line);color:#fff;border-radius:12px;padding:12px;font:600 16px Fredoka,system-ui,sans-serif;margin-bottom:8px}
+.act{background:var(--vi);border:0;border-radius:12px;padding:11px 16px;color:#fff;font:600 15px Fredoka,system-ui,sans-serif;cursor:pointer}.act.r{background:#8f2a3a}
+.r1{display:flex;justify-content:space-between;align-items:center;gap:8px}.r1>div{min-width:0}
+.v{display:none}.v.on{display:block}
 </style></head><body><div class="w">
-<h1>Epic Bot · Admin</h1>
-<div class="f" id="lg"><input id="pw" type="password" placeholder="Admin parol"><button onclick="login()">Kirish</button></div>
+<h1>⚙️ Admin panel</h1>
+<div id="lg" class="c"><input id="pw" type="password" placeholder="Admin parol"><button class="act" onclick="login()">🔑 Kirish</button></div>
 <div id="app" style="display:none">
-<div class="g" id="st"></div>
-<div class="tb"><button class="on" data-t="u">Foydalanuvchilar</button><button data-t="p">Promokodlar</button><button data-t="k">Konkurslar</button></div>
-<div class="p on c" id="u"><div class="f"><input id="q" placeholder="ID yoki ism"><button onclick="users()">Qidirish</button></div>
-<table><thead><tr><th>ID</th><th>Ism</th><th>Balans</th><th>O'yin</th><th>Balans berish</th></tr></thead><tbody id="ub"></tbody></table></div>
-<div class="p c" id="p"><h3>Yangi promokod</h3><div class="f"><input id="pcode" placeholder="KOD"><input id="pam" type="number" placeholder="Summa"><input id="pus" type="number" placeholder="Necha kishi"><button onclick="addP()">Yaratish</button></div><table><tbody id="pb"></tbody></table></div>
-<div class="p c" id="k"><h3>Yangi konkurs</h3><div class="f"><input id="kt" placeholder="Nomi"><input id="kp" type="number" placeholder="Sovrin"><button onclick="addK()">Yaratish</button></div><table><tbody id="kb"></tbody></table></div>
-</div></div><script>
+ <div class="v on" id="v_menu"><div class="menu">
+  <button class="mb b" onclick="show('stats')"><i>📊</i>Statistika</button>
+  <button class="mb" onclick="show('users')"><i>👥</i>Foydalanuvchilar</button>
+  <button class="mb g" onclick="show('give')"><i>💰</i>Balans berish</button>
+  <button class="mb o" onclick="show('promos')"><i>🎟</i>Promokodlar</button>
+  <button class="mb p" onclick="show('conts')"><i>🏆</i>Konkurslar</button>
+  <button class="mb" onclick="location.href='/'"><i>🎮</i>O'yinga qaytish</button></div></div>
+ <div class="v" id="v_stats"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>📊 Statistika</h2><div class="g2" id="st"></div></div>
+ <div class="v" id="v_users"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>👥 Foydalanuvchilar</h2>
+  <div style="display:flex;gap:8px"><input id="q" placeholder="🔍 ID yoki ism"><button class="act" style="height:46px" onclick="loadUsers()">Qidirish</button></div><div id="ul"></div></div>
+ <div class="v" id="v_give"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>💰 Balans berish</h2><div class="c">
+  <input id="gid" placeholder="Foydalanuvchi ID (masalan tg12345)"><input id="gam" type="number" placeholder="Miqdor (ayirish uchun minus)"><button class="act" onclick="give()">💰 Bajarish</button></div></div>
+ <div class="v" id="v_promos"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>🎟 Promokodlar</h2><div class="c">
+  <input id="pc" placeholder="Kod"><input id="pa" type="number" placeholder="Summa"><input id="pu" type="number" placeholder="Necha kishiga"><button class="act" onclick="addP()">➕ Yaratish</button></div><div id="pl"></div></div>
+ <div class="v" id="v_conts"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>🏆 Konkurslar</h2><div class="c">
+  <input id="kt" placeholder="Nomi"><input id="kp" type="number" placeholder="Sovrin"><button class="act" onclick="addK()">➕ Yaratish</button></div><div id="kl"></div></div>
+</div></div>
+<script>
 let pw=sessionStorage.pw||'';const $=i=>document.getElementById(i),n=v=>Math.floor(v).toLocaleString('ru');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const api=(p,m='GET',b)=>fetch('/api/admin/'+p,{method:m,headers:{'content-type':'application/json','x-admin':pw},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error;return j}).catch(e=>{alert(e);throw e});
-async function login(){pw=$('pw').value||pw;await api('stats');sessionStorage.pw=pw;$('lg').style.display='none';$('app').style.display='block';all()}
-document.querySelectorAll('.tb button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tb button').forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.p').forEach(p=>p.classList.toggle('on',p.id==b.dataset.t))});
-async function all(){const s=await api('stats');$('st').innerHTML=[['Foydalanuvchilar',s.users],['Jami balans',s.balance],['Stavkalar',s.bets],['Jami stavka',s.wagered],['To\'langan',s.paid],['Promokodlar',s.promos],['Konkurslar',s.contests]].map(x=>`<div class="c"><small>${x[0]}</small><b>${n(x[1])}</b></div>`).join('');users();promos();conts()}
-async function users(){const l=await api('users?q='+encodeURIComponent($('q').value));$('ub').innerHTML=l.map(u=>`<tr><td>${esc(u.id)}</td><td>${esc(u.name)}</td><td>${n(u.balance)}</td><td>${u.games}</td><td><input id="g_${esc(u.id)}" type="number" placeholder="+/-" style="width:100px"> <button onclick="give('${esc(u.id)}')">OK</button></td></tr>`).join('')}
-async function give(id){await api('give','POST',{id,amount:$('g_'+id).value});all()}
-async function promos(){const l=await api('promos');$('pb').innerHTML=l.map(p=>`<tr><td><b>${esc(p.code)}</b></td><td>${n(p.amount)}</td><td>${p.used} ishlatilgan / ${p.left} qoldi</td><td><button class="d" onclick="delP('${esc(p.code)}')">O'chirish</button></td></tr>`).join('')}
-async function addP(){await api('promos','POST',{code:$('pcode').value,amount:$('pam').value,uses:$('pus').value});all()}
-async function delP(c){await api('promos/'+c,'DELETE');all()}
-async function conts(){const l=await api('contests');$('kb').innerHTML=l.map(c=>`<tr><td><b>${esc(c.title)}</b></td><td>${n(c.prize)}</td><td>${c.players.length} kishi</td><td>${c.done?'G\'olib: '+esc(c.winnerName):`<button onclick="draw('${c.id}')">G'olibni aniqlash</button>`} <button class="d" onclick="delK('${c.id}')">×</button></td></tr>`).join('')}
-async function addK(){await api('contests','POST',{title:$('kt').value,prize:$('kp').value});all()}
-async function draw(id){await api('contests/'+id+'/draw','POST');all()}
-async function delK(id){await api('contests/'+id,'DELETE');all()}
-if(pw){$('pw').value=pw;login().catch(()=>{})}
+const tg=window.Telegram&&Telegram.WebApp;if(tg){tg.ready();tg.expand()}
+const api=(p,m='GET',b)=>fetch('/api/admin/'+p,{method:m,headers:{'content-type':'application/json','x-admin':pw,'x-init':tg?tg.initData:''},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error;return j});
+async function login(){pw=$('pw').value||pw;try{await api('stats');sessionStorage.pw=pw;$('lg').style.display='none';$('app').style.display='block'}catch(e){alert(e)}}
+const L={stats:loadStats,users:loadUsers,promos:loadPromos,conts:loadConts};
+function show(v){document.querySelectorAll('.v').forEach(x=>x.classList.toggle('on',x.id=='v_'+v));if(L[v])L[v]().catch(e=>alert(e))}
+async function loadStats(){const s=await api('stats');$('st').innerHTML=[['👥 Foydalanuvchilar',s.users],['💎 Jami balans',s.balance],['🎯 Stavkalar',s.bets],['📥 Jami stavka',s.wagered],['📤 To\'langan',s.paid],['🎟 Promokodlar',s.promos],['🏆 Konkurslar',s.contests]].map(x=>`<div class="c"><small>${x[0]}</small><b>${n(x[1])}</b></div>`).join('')}
+async function loadUsers(){const l=await api('users?q='+encodeURIComponent($('q').value));
+ $('ul').innerHTML=l.map(u=>`<div class="c r1"><div><b>${esc(u.name)}</b><small>${esc(u.id)} · 💎 ${n(u.balance)}</small></div><button class="act" onclick="$('gid').value='${esc(u.id)}';show('give')">💰</button></div>`).join('')}
+async function give(){try{const u=await api('give','POST',{id:$('gid').value,amount:$('gam').value});alert('✅ '+u.name+': 💎 '+n(u.balance))}catch(e){alert(e)}}
+async function loadPromos(){const l=await api('promos');$('pl').innerHTML=l.map(p=>`<div class="c r1"><div><b>${esc(p.code)}</b><small>💎 ${n(p.amount)} · ${p.used} ishlatilgan / ${p.left} qoldi</small></div><button class="act r" onclick="delP('${esc(p.code)}')">🗑</button></div>`).join('')}
+async function addP(){try{await api('promos','POST',{code:$('pc').value,amount:$('pa').value,uses:$('pu').value});loadPromos()}catch(e){alert(e)}}
+async function delP(c){await api('promos/'+c,'DELETE');loadPromos()}
+async function loadConts(){const l=await api('contests');$('kl').innerHTML=l.map(c=>`<div class="c r1"><div><b>${esc(c.title)}</b><small>💎 ${n(c.prize)} · ${c.players.length} kishi${c.done?' · 🏅 '+esc(c.winnerName):''}</small></div><div>${c.done?'':`<button class="act" onclick="draw('${c.id}')">🎲</button> `}<button class="act r" onclick="delK('${c.id}')">🗑</button></div></div>`).join('')}
+async function addK(){try{await api('contests','POST',{title:$('kt').value,prize:$('kp').value});loadConts()}catch(e){alert(e)}}
+async function draw(id){try{await api('contests/'+id+'/draw','POST');loadConts()}catch(e){alert(e)}}
+async function delK(id){await api('contests/'+id,'DELETE');loadConts()}
+if(pw)$('pw').value=pw;if(pw||(tg&&tg.initData))login();
 </script></body></html>
