@@ -149,4 +149,10 @@ app.post(A+'/contests/:id/draw',adm,(q,s)=>{const c=db.contests[q.params.id];
   const w=db.users[c.players[Math.floor(Math.random()*c.players.length)]];w.balance+=c.prize;c.done=true;c.winnerName=w.name;save();s.json(c)});
 app.delete(A+'/contests/:id',adm,(q,s)=>{delete db.contests[q.params.id];save();s.json({ok:1})});
 
+// ---------- RESET (hammasini boshidan) ----------
+app.post(A+'/reset',adm,(q,s)=>{for(const u of Object.values(db.users)){u.balance=START;u.games=0;u.claimed={}}
+  db.stats={bets:0,wagered:0,paid:0};db.history=[];
+  for(const k of Object.keys(R.bets))if(!R.bets[k].bot)delete R.bets[k];
+  save();s.json({ok:1,users:Object.keys(db.users).length})});
+
 app.listen(process.env.PORT||3000,()=>console.log('epic_bot ishga tushdi'));
