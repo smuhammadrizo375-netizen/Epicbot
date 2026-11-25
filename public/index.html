@@ -73,6 +73,11 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:#000}
 .ri.win{background:#2a2455}
 .pin{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 12px #fff;z-index:2;transform:translateX(-50%)}
 #cvp{display:flex;flex-wrap:wrap;gap:8px}.pz{padding:8px 12px;border:2px solid;border-radius:12px;background:#12102acc;font-weight:600}
+
+nav{background:#161618f2;border-top:1px solid #2a2a30;padding:8px 6px calc(8px + env(safe-area-inset-bottom));gap:2px}
+nav button{flex:1;min-width:0;padding:8px 2px;border-radius:20px;color:#8e8e93;font-size:11px;font-weight:600;gap:4px;line-height:1.1;white-space:nowrap}
+nav button svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
 </style></head><body>
 <div id="toast"></div>
 <div id="err" style="display:none"></div>
@@ -105,7 +110,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:#000}
  <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
  <h2 style="margin-top:18px">Konkurslar</h2><div id="cons"></div></section>
 </div>
-<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>📋</i>Vazifalar</button><button data-p="cases"><i>🎁</i>Keyslar</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><i>⚙️</i>Admin</button></nav>
+<nav><button class="on" data-p="home"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-5.5h4v5.5h3.5a1 1 0 0 0 1-1V10"/></svg>Bosh sahifa</button><button data-p="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5a1 1 0 0 0-1 1c0 2.2 1.6 3.8 4 4M16 6h3a1 1 0 0 1 1 1c0 2.2-1.6 3.8-4 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg>Reyting</button><button data-p="rew"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2"/><rect x="9" y="2.5" width="6" height="4" rx="1"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></svg>Vazifalar</button><button data-p="cases"><svg viewBox="0 0 24 24"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7.5M12 8.5V21"/><path d="M12 8.5C10 8.5 7.5 8 7.5 6A2 2 0 0 1 9.5 4C11 4 12 6 12 8.5ZM12 8.5C14 8.5 16.5 8 16.5 6A2 2 0 0 0 14.5 4C13 4 12 6 12 8.5Z"/></svg>Keyslar</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Admin</button></nav>
 
 <script>
 const tg=window.Telegram&&Telegram.WebApp,tu=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
