@@ -22,12 +22,12 @@ function tgUser(init){if(!TOKEN||!init)return null;
   if(Date.now()/1000-(+p.get('auth_date')||0)>86400)return null;
   try{return JSON.parse(p.get('user'))}catch{return null}}
 function ident(req){const t=tgUser(req.headers['x-init']);
-  if(t)return{id:'tg'+t.id,name:t.first_name||t.username||'Player',tg:String(t.id)};
+  if(t)return{id:'tg'+t.id,name:t.first_name||t.username||'Player',tg:String(t.id),photo:t.photo_url||null};
   if(TOKEN&&process.env.ALLOW_GUEST==='0')return null;
   const id=clean(req.headers['x-uid']);return id&&!id.startsWith('tg')?{id,name:'Guest'}:null}
 function me(req){const i=ident(req);if(!i)return null;
   if(!db.users[i.id]){db.users[i.id]={id:i.id,name:i.name,balance:START,created:Date.now(),games:0};save()}
-  const u=db.users[i.id];if(i.tg&&u.name!==i.name){u.name=i.name;save()}u.tg=i.tg;return u}
+  const u=db.users[i.id];if(i.tg&&u.name!==i.name){u.name=i.name;save()}u.tg=i.tg;if(i.photo)u.photo=i.photo;return u}
 const auth=(q,s,n)=>{const u=me(q);if(!u)return s.status(401).json({error:'Kirish rad etildi'});q.u=u;n()};
 const isAdm=q=>{const i=ident(q);return !!(i&&i.tg&&ADMIN_IDS.includes(i.tg))};
 const adm=(q,s,n)=>(q.headers['x-admin']===ADMIN||isAdm(q))?n():s.status(403).json({error:'Ruxsat yo\'q'});
@@ -39,7 +39,7 @@ if(TOKEN&&TGURL){
   const esc=x=>String(x||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   app.post('/tg/'+WH,(q,s)=>{s.sendStatus(200);const m=q.body.message;
     if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,parse_mode:'HTML',
-            text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b> ✨\n\n🚀 Bu <b>epic fake bot</b> 🎮\n\nO'ynash uchun pastdagi tugmani bosing 👇`,
+      text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b>!\n\n🚀 <b>Epic Raketa</b> — demo o\'yin. Haqiqiy pul yo\'q, faqat o\'yin uchun ⭐.\n\n🎁 Boshlang\'ich balans: <b>10 000 ⭐</b>\n🎯 Minimal stavka: <b>1 000 ⭐</b>\n📋 Vazifalarni bajaring, promokod kiriting va konkurslarda qatnashing!\n\nBoshlash uchun pastdagi tugmani bosing 👇`,
       reply_markup:{inline_keyboard:[[{text:'🚀 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
   tgApi('setWebhook',{url:TGURL+'/tg/'+WH}).then(r=>console.log('webhook',r.ok)).catch(console.error);
   tgApi('setMyCommands',{commands:[{command:'start',description:'O\'yinni boshlash'}]}).catch(()=>{});
@@ -50,20 +50,41 @@ app.post('/api/me',auth,(q,s)=>{if(q.body.name&&!q.u.tg)q.u.name=String(q.body.n
 app.get('/api/history',(q,s)=>s.json(db.history.slice(-20).reverse()));
 app.get('/api/top',(q,s)=>s.json(Object.values(db.users).sort((a,b)=>b.balance-a.balance).slice(0,20).map(u=>({name:u.name,balance:u.balance}))));
 
+// ---------- UMUMIY RAUND ----------
+const WAIT=7000,SHOW=3500,BOTS=['#7c5cff','#22c58b','#ff8a1f','#3b82f6','#ff5d73'];
+let R,roundNo=0,botQ=[];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function newRound(){R={id:++roundNo,state:'wait',end:Date.now()+WAIT,t0:0,crash:crashPoint(),bets:{}};
+  botQ=BOTS.map((c,i)=>({at:Date.now()+600+Math.random()*(WAIT-2200),i})).filter(()=>Math.random()<0.85).sort((x,y)=>x.at-y.at)}
+function botBet(i){const r=Math.random(),t=r<.6?1.1+Math.random()*1.4:r<.9?2.5+Math.random()*5.5:8+Math.random()*30;
+  R.bets['bot'+i]={name:'Epic Bot',bot:true,color:BOTS[i],amount:pick([1000,2000,5000,10000,25000,50000]),cash:null,tgt:Math.round(t*100)/100}}
+newRound();
+setInterval(()=>{const n=Date.now();
+  if(R.state==='wait'){while(botQ.length&&botQ[0].at<=n)botBet(botQ.shift().i);if(n>=R.end){R.state='run';R.t0=n}}
+  if(R.state==='run'){const m=mult(R);
+    for(const b of Object.values(R.bets))if(b.bot&&b.cash==null&&b.tgt<m&&b.tgt<R.crash)b.cash=b.tgt;
+    if(m>=R.crash){R.state='crash';R.end=n+SHOW;db.history.push(R.crash);if(db.history.length>100)db.history.shift();save()}}
+  else if(R.state==='crash'&&n>=R.end)newRound()},100);
+// portlash qiymati raund tugamaguncha hech kimga yuborilmaydi
+function view(q){const n=Date.now();
+  const list=Object.entries(R.bets).map(([id,b])=>({name:b.name,photo:b.photo||null,bot:!!b.bot,color:b.color||null,amount:b.amount,cash:b.cash,
+    win:b.cash?Math.floor(b.amount*b.cash):0,st:b.cash?'won':R.state==='crash'?'lost':'live',me:id===q.u.id})).sort((x,y)=>y.amount-x.amount);
+  const mb=R.bets[q.u.id];
+  return{id:R.id,state:R.state,wait:Math.max(0,R.end-n),elapsed:R.state==='run'?n-R.t0:0,crash:R.state==='crash'?R.crash:null,
+    bets:list.slice(0,60),count:list.length,total:list.reduce((x,b)=>x+b.amount,0),balance:q.u.balance,
+    history:db.history.slice(-20).reverse(),mine:mb?{amount:mb.amount,cash:mb.cash}:null}}
+app.get('/api/round',auth,(q,s)=>s.json(view(q)));
 app.post('/api/bet',auth,(q,s)=>{const u=q.u,a=Math.floor(+q.body.amount);
-  if(games[u.id])return s.status(400).json({error:'O\'yin davom etmoqda'});
+  if(R.state!=='wait')return s.status(400).json({error:'Raund ketmoqda, keyingisini kuting'});
+  if(R.bets[u.id])return s.status(400).json({error:'Siz allaqachon stavka qilgansiz'});
   if(!(a>=MIN))return s.status(400).json({error:`Minimal stavka ${MIN}`});
   if(a>u.balance)return s.status(400).json({error:'Balans yetarli emas'});
-  u.balance-=a;u.games++;db.stats.bets++;db.stats.wagered+=a;games[u.id]={bet:a,t0:Date.now(),crash:crashPoint()};save();
+  u.balance-=a;u.games++;db.stats.bets++;db.stats.wagered+=a;R.bets[u.id]={name:u.name,photo:u.photo,amount:a,cash:null};save();
   s.json({balance:u.balance})});
-function finish(u,g,win){delete games[u.id];if(!win)db.history.push(g.crash);if(db.history.length>100)db.history.shift();save()}
-app.get('/api/status',auth,(q,s)=>{const g=games[q.u.id];if(!g)return s.json({state:'idle'});
-  const m=mult(g);if(m>=g.crash){finish(q.u,g,false);return s.json({state:'crashed',crash:g.crash})}
-  s.json({state:'run',m,elapsed:Date.now()-g.t0})});
-app.post('/api/cash',auth,(q,s)=>{const u=q.u,g=games[u.id];if(!g)return s.status(400).json({error:'O\'yin yo\'q'});
-  const m=mult(g);if(m>=g.crash){finish(u,g,false);return s.json({state:'crashed',crash:g.crash})}
-  const win=Math.floor(g.bet*m);u.balance+=win;db.stats.paid+=win;db.history.push(g.crash);finish(u,g,true);
-  s.json({state:'won',m,win,balance:u.balance,crash:g.crash})});
+app.post('/api/cash',auth,(q,s)=>{const u=q.u,b=R.bets[u.id];
+  if(R.state!=='run'||!b||b.cash)return s.status(400).json({error:'Hozir olib bo\'lmaydi'});
+  const m=mult(R);if(m>=R.crash)return s.status(400).json({error:'Kech qoldingiz, raketa portladi'});
+  b.cash=m;const win=Math.floor(b.amount*m);u.balance+=win;db.stats.paid+=win;save();s.json({balance:u.balance,m,win})});
 
 app.post('/api/promo',auth,(q,s)=>{const p=db.promos[clean(q.body.code).toUpperCase()];
   if(!p||p.left<=0)return s.status(400).json({error:'Promokod yaroqsiz'});
