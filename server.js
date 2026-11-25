@@ -39,7 +39,7 @@ if(TOKEN&&TGURL){
   const esc=x=>String(x||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   app.post('/tg/'+WH,(q,s)=>{s.sendStatus(200);const m=q.body.message;
     if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,parse_mode:'HTML',
-      text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b>!\n\n🚀 <b>Epic Raketa</b> — demo o\'yin. Haqiqiy pul yo\'q, faqat o\'yin uchun ⭐.\n\n🎁 Boshlang\'ich balans: <b>10 000 ⭐</b>\n🎯 Minimal stavka: <b>1 000 ⭐</b>\n📋 Vazifalarni bajaring, promokod kiriting va konkurslarda qatnashing!\n\nBoshlash uchun pastdagi tugmani bosing 👇`,
+      text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b> ✨\n\n🚀 Bu <b>epic fake bot</b> 🎮\n\nO'ynash uchun pastdagi tugmani bosing 👇`,
       reply_markup:{inline_keyboard:[[{text:'🚀 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
   tgApi('setWebhook',{url:TGURL+'/tg/'+WH}).then(r=>console.log('webhook',r.ok)).catch(console.error);
   tgApi('setMyCommands',{commands:[{command:'start',description:'O\'yinni boshlash'}]}).catch(()=>{});
@@ -109,6 +109,21 @@ app.get('/api/tasks',auth,(q,s)=>s.json(taskState(q.u)));
 app.post('/api/tasks/claim',auth,(q,s)=>{const t=TASKS.find(x=>x.id===q.body.id),st=t&&taskState(q.u).find(x=>x.id===t.id);
   if(!st||st.status!=='ready')return s.status(400).json({error:'Vazifa hali bajarilmagan'});
   q.u.claimed[t.id]=Date.now();q.u.balance+=t.reward;save();s.json({balance:q.u.balance,reward:t.reward})});
+
+// ---------- KEYSLAR ----------
+const MULTS=[[0.1,20],[0.3,25],[0.6,20],[0.9,5],[1.2,14],[1.5,9],[3,5],[10,2]];   // 70% holatda narxdan kam tushadi
+const CASES=[{id:'free',name:'Kunlik bepul keys',emoji:'🎁',price:0,items:[[100,50],[250,25],[500,15],[1000,8],[5000,2]]},
+ ...[1000,5000,25000,100000].map((p,i)=>({id:'c'+p,name:['Oddiy keys','Kumush keys','Oltin keys','Premium keys'][i],emoji:['📦','🥈','🥇','💠'][i],price:p,
+  items:MULTS.map(([m,w])=>[Math.round(p*m),w])}))];
+const DAY=24*3600e3;
+app.get('/api/cases',auth,(q,s)=>s.json(CASES.map(c=>({id:c.id,name:c.name,emoji:c.emoji,price:c.price,items:c.items.map(([v,w])=>({v,w})),
+  left:c.price?0:Math.max(0,(q.u.caseAt||0)+DAY-Date.now())}))));
+app.post('/api/cases/open',auth,(q,s)=>{const c=CASES.find(x=>x.id===q.body.id),u=q.u;if(!c)return s.status(400).json({error:'Keys topilmadi'});
+  if(!c.price){if(Date.now()<(u.caseAt||0)+DAY)return s.status(400).json({error:'Bepul keys hali tayyor emas'})}
+  else if(u.balance<c.price)return s.status(400).json({error:'Balans yetarli emas'});
+  let r=Math.random()*c.items.reduce((a,i)=>a+i[1],0),prize=c.items[0][0];
+  for(const [v,w] of c.items){if((r-=w)<0){prize=v;break}}
+  if(c.price)u.balance-=c.price;else u.caseAt=Date.now();u.balance+=prize;save();s.json({prize,balance:u.balance})});
 
 // ---------- ADMIN ----------
 const A='/api/admin';
