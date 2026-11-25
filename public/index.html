@@ -43,8 +43,8 @@ h2{font-size:22px;margin:4px 0 12px}
 #toast.on{transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){.rocket.boom{animation:none;opacity:0}}
 
-html{background:#05040b}body{background:transparent}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(bg.jpg) center/cover}
+html{background:#000}body{background:transparent}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:#000}
 .stage{background:radial-gradient(ellipse at 50% 100%,#3a1c7a77,transparent 65%)}
 .panel,.item,.chip{background:#12102acc}
 .ava{overflow:hidden}.ava img{width:100%;height:100%;object-fit:cover}.cap{font-size:11px;color:var(--mu)}
@@ -66,6 +66,13 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(bg.jpg)
 .bav img{width:100%;height:100%;object-fit:cover}
 .bn{flex:1;min-width:0}.bn b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bn small{opacity:.9}
 .bp{background:#0004;padding:6px 12px;border-radius:12px;font-weight:700;white-space:nowrap}
+.t4{background:linear-gradient(120deg,#ff4d8d,#8b5cf6)}
+.reelw{position:relative;overflow:hidden;border-radius:18px;background:#0008;border:1px solid var(--line);padding:10px 0;margin:12px 0}
+.reel{display:flex;gap:8px;width:max-content;will-change:transform}
+.ri{width:88px;height:78px;flex:none;border:2px solid;border-radius:14px;display:grid;place-items:center;text-align:center;font-weight:700;background:#12102a;font-size:14px;line-height:1.2}
+.ri.win{background:#2a2455}
+.pin{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 12px #fff;z-index:2;transform:translateX(-50%)}
+#cvp{display:flex;flex-wrap:wrap;gap:8px}.pz{padding:8px 12px;border:2px solid;border-radius:12px;background:#12102acc;font-weight:600}
 </style></head><body>
 <div id="toast"></div>
 <div id="err" style="display:none"></div>
@@ -79,6 +86,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(bg.jpg)
   <span class="tag">🔥 HIT</span><span class="ttl">🚀 RAKETA</span></button>
  <button class="tile t2" onclick="toast('Tez orada')"><div class="pc solo">👑</div><div class="pc vs">VS</div>
   <img class="bg" src="pvp.jpg" alt="" onerror="this.remove()"><span class="tag">⚡ YANGI</span><span class="ttl">⚔️ PVP HUB</span></button>
+ <button class="tile t4" onclick="go('cases')"><span class="tag">🎁 BEPUL</span><span style="position:absolute;right:26px;top:10px;font-size:78px">📦</span><span class="ttl">📦 KEYSLAR</span></button>
  <button class="tile" onclick="toast('Tez orada')"><img class="bg" src="play.jpg" alt=""><span class="ttl">🎮 PLAY HUB</span></button>
 </section>
 
@@ -91,12 +99,13 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(bg.jpg)
  <h2 id="bh" style="margin:16px 0 10px;font-size:18px"></h2><div class="blist" id="bl"></div>
 </section>
 
+<section id="cases"><div id="cl"></div><div id="cv" style="display:none"><button class="q" onclick="closeCase()">⬅️ Orqaga</button><h2 id="cvt" style="margin-top:10px"></h2><div class="reelw"><div class="pin"></div><div class="reel" id="reel"></div></div><button class="go" id="cvb" onclick="openCase()"></button><p id="cvr" style="text-align:center;margin:10px 0;font-weight:600"></p><h2 style="font-size:16px">Ichida nima bor</h2><div id="cvp"></div></div></section>
 <section id="top"><h2>Reyting</h2><div id="toplist"></div></section>
 <section id="rew"><h2>Vazifalar</h2><div id="tasks"></div><h2 style="margin-top:18px">Promokod</h2>
  <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
  <h2 style="margin-top:18px">Konkurslar</h2><div id="cons"></div></section>
 </div>
-<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>📋</i>Vazifalar</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><i>⚙️</i>Admin</button></nav>
+<nav><button class="on" data-p="home"><i>🏠</i>Bosh sahifa</button><button data-p="top"><i>🏆</i>Reyting</button><button data-p="rew"><i>📋</i>Vazifalar</button><button data-p="cases"><i>🎁</i>Keyslar</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><i>⚙️</i>Admin</button></nav>
 
 <script>
 const tg=window.Telegram&&Telegram.WebApp,tu=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user;
@@ -109,8 +118,8 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTi
 function setBal(v){bal=v;$('bal').textContent=fmt(v)}
 function setA(v){$('amt').value=v||bal}
 function go(p){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==p));
- document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||(p=='crash'&&b.dataset.p=='home')));
- if(p=='home'||p=='crash')hist();if(p=='crash'){pull();loop()}if(p=='top')loadTop();if(p=='rew')loadRew()}
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||((p=='crash'||p=='cases')&&b.dataset.p=='home')));
+ if(p=='home'||p=='crash')hist();if(p=='crash'){pull();loop()}if(p=='cases')loadCases();if(p=='top')loadTop();if(p=='rew')loadRew()}
 document.querySelectorAll('nav button[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
 const chipHTML=a=>a.map(x=>`<div class="chip" style="color:${mc(x)}">${x.toFixed(2)}x</div>`).join('');
 async function hist(){const h=await api('history');$('hist1').innerHTML=$('hist2').innerHTML=chipHTML(h)}
@@ -154,6 +163,25 @@ async function act(){const amt=Math.floor(+$('amt').value);$('btn').disabled=tru
  try{if(R.state=='run'){const r=await api('cash',{});setBal(r.balance);R.mine.cash=r.m;toast('+'+fmt(r.win)+' 💎')}
   else{const r=await api('bet',{amount:amt});setBal(r.balance);R.mine={amount:amt,cash:null}}
   pull()}catch(e){toast(e)}}
+/* ---- Keyslar ---- */
+let CS=[],cur=null,spin=false;const WIN=40,pal=['#64748b','#3b82f6','#22c58b','#b36bff','#ffd23f'];
+const ric=(v,it)=>pal[Math.min(4,Math.floor(it.findIndex(x=>x.v==v)/it.length*5))];
+async function loadCases(){CS=await api('cases');$('cv').style.display='none';$('cl').style.display='block';
+ $('cl').innerHTML=CS.map(c=>{const vs=c.items.map(i=>i.v);return `<div class="item" onclick="showCase('${c.id}')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:34px">${c.emoji}</span><div><b>${esc(c.name)}</b><small>💎 ${fmt(Math.min(...vs))} – ${fmt(Math.max(...vs))}</small></div></div><b>${c.price?'💎 '+fmt(c.price):'BEPUL'}</b></div>`}).join('')}
+function showCase(id){cur=CS.find(c=>c.id==id);$('cl').style.display='none';$('cv').style.display='block';$('cvt').textContent=cur.emoji+' '+cur.name;$('cvr').textContent='';fillReel(null);
+ $('cvp').innerHTML=cur.items.map(i=>`<div class="pz" style="border-color:${ric(i.v,cur.items)}">💎 ${fmt(i.v)}</div>`).join('');cvBtn()}
+function cvBtn(){const b=$('cvb');b.disabled=spin||(!cur.price&&cur.left>0);b.textContent=cur.price?'Ochish 💎 '+fmt(cur.price):cur.left>0?'⏳ '+left(cur.left):'🎁 Bepul ochish'}
+function pickW(it){let r=Math.random()*it.reduce((a,i)=>a+i.w,0);for(const i of it){if((r-=i.w)<0)return i.v}return it[0].v}
+function fillReel(prize){const it=cur.items,a=[];for(let i=0;i<50;i++)a.push(i==WIN&&prize!=null?prize:pickW(it));
+ const r=$('reel');r.style.transition='none';r.style.transform='translateX(0)';
+ r.innerHTML=a.map((v,i)=>`<div class="ri${i==WIN&&prize!=null?' win':''}" style="border-color:${ric(v,it)}">💎<br>${fmt(v)}</div>`).join('')}
+function closeCase(){if(!spin)loadCases()}
+async function openCase(){if(spin)return;spin=true;cvBtn();
+ try{const r=await api('cases/open',{id:cur.id});fillReel(r.prize);$('cvr').textContent='';
+  const rl=$('reel'),w=rl.parentElement.clientWidth,x=WIN*96+44-w/2+(Math.random()*40-20);
+  rl.getBoundingClientRect();rl.style.transition='transform 5.5s cubic-bezier(.12,.65,.12,1)';rl.style.transform=`translateX(${-x}px)`;
+  setTimeout(()=>{setBal(r.balance);$('cvr').textContent='Tushdi: 💎 '+fmt(r.prize);toast('💎 '+fmt(r.prize));spin=false;if(!cur.price)cur.left=24*3600e3;cvBtn()},5700)}
+ catch(e){toast(e);spin=false;cvBtn()}}
 /* yulduzlar */
 (function(){const c=$('stars'),x=c.getContext('2d');let S=[];
  function size(){c.width=c.clientWidth;c.height=c.clientHeight;S=Array.from({length:60},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.6+.3,v:Math.random()*.25+.05}))}
