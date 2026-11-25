@@ -18,18 +18,21 @@ input{width:100%;background:#0c1030;border:1px solid var(--line);color:#fff;bord
 .r1{display:flex;justify-content:space-between;align-items:center;gap:8px}.r1>div{min-width:0}
 .mb.x{background:linear-gradient(135deg,#a3202f,#470d14);flex-direction:row;justify-content:center;border-color:#7a1f2c}.warn{color:#ff5d73;font-size:14px;text-align:center;line-height:1.4}
 .v{display:none}.v.on{display:block}
+.mb.im{background-color:#000;background-size:cover;background-position:center;aspect-ratio:2.05;padding:0;position:relative;border:0;border-radius:24px;overflow:hidden;display:block;box-shadow:none}
+.mb.im.rs{aspect-ratio:4.6}
+.mb.im .lb{position:absolute;left:10px;top:10px;background:#000a;backdrop-filter:blur(4px);padding:4px 11px;border-radius:12px;font-size:13px;font-weight:600;text-align:left}
 </style></head><body><div class="w">
 <h1>⚙️ Admin panel</h1>
 <div id="lg" class="c"><input id="pw" type="password" placeholder="Admin parol"><button class="act" onclick="login()">🔑 Kirish</button></div>
 <div id="app" style="display:none">
  <div class="v on" id="v_menu"><div class="menu">
-  <button class="mb b" onclick="show('stats')"><i>📊</i>Statistika</button>
-  <button class="mb" onclick="show('users')"><i>👥</i>Foydalanuvchilar</button>
-  <button class="mb g" onclick="show('give')"><i>💰</i>Balans berish</button>
-  <button class="mb o" onclick="show('promos')"><i>🎟</i>Promokodlar</button>
-  <button class="mb p" onclick="show('conts')"><i>🏆</i>Konkurslar</button>
-  <button class="mb" onclick="location.href='/'"><i>🎮</i>O'yinga qaytish</button>
-  <button class="mb x" id="rs" style="grid-column:span 2" onclick="resetAll()"><i>🔄</i>Reset</button>
+  <button class="mb im" style="background-image:url(a_stats.jpg)" onclick="show('stats')"><span class="lb">Statistika</span></button>
+  <button class="mb im" style="background-image:url(a_users.jpg)" onclick="show('users')"><span class="lb">Foydalanuvchilar</span></button>
+  <button class="mb im" style="background-image:url(a_give.jpg)" onclick="show('give')"><span class="lb">Balans berish</span></button>
+  <button class="mb im" style="background-image:url(a_promo.jpg)" onclick="show('promos')"><span class="lb">Promokodlar</span></button>
+  <button class="mb im" style="background-image:url(a_conts.jpg)" onclick="show('conts')"><span class="lb">Konkurslar</span></button>
+  <button class="mb im" style="background-image:url(a_game.jpg)" onclick="location.href='/'"><span class="lb">O'yinga qaytish</span></button>
+  <button class="mb im rs" id="rs" style="grid-column:span 2;background-image:url(a_reset.jpg)" onclick="resetAll()"><span class="lb">Reset</span></button>
   <p class="warn" style="grid-column:span 2">⚠️ Bu reset tugmasi botdagi hamma foydalanuvchining balansini va reytingini tozalaydi (balans 10 000 ga qaytadi). Ortga qaytarib bo'lmaydi!</p></div></div>
  <div class="v" id="v_stats"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>📊 Statistika</h2><div class="g2" id="st"></div></div>
  <div class="v" id="v_users"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>👥 Foydalanuvchilar</h2>
@@ -62,8 +65,8 @@ async function draw(id){try{await api('contests/'+id+'/draw','POST');loadConts()
 async function delK(id){await api('contests/'+id,'DELETE');loadConts()}
 let rsT=0;
 async function resetAll(){const b=$('rs');
- if(!rsT){b.innerHTML='<i>❗</i>Tasdiqlash: yana bosing';rsT=setTimeout(()=>{rsT=0;b.innerHTML='<i>🔄</i>Reset'},5000);return}
- clearTimeout(rsT);rsT=0;b.innerHTML='<i>🔄</i>Reset';
+ if(!rsT){b.querySelector('.lb').textContent='❗ Tasdiqlash: yana bosing';rsT=setTimeout(()=>{rsT=0;b.querySelector('.lb').textContent='Reset'},5000);return}
+ clearTimeout(rsT);rsT=0;b.querySelector('.lb').textContent='Reset';
  try{const r=await api('reset','POST');alert('✅ Reset bajarildi: '+r.users+' ta foydalanuvchi')}catch(e){alert(e)}}
 if(pw)$('pw').value=pw;if(pw||(tg&&tg.initData))login();
 </script></body></html>
