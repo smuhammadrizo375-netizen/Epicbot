@@ -16,6 +16,7 @@ body{font:500 16px Fredoka,system-ui,sans-serif;background:#000;color:#f2f0ff;pa
 input{width:100%;background:#0c1030;border:1px solid var(--line);color:#fff;border-radius:12px;padding:12px;font:600 16px Fredoka,system-ui,sans-serif;margin-bottom:8px}
 .act{background:var(--vi);border:0;border-radius:12px;padding:11px 16px;color:#fff;font:600 15px Fredoka,system-ui,sans-serif;cursor:pointer}.act.r{background:#8f2a3a}
 .r1{display:flex;justify-content:space-between;align-items:center;gap:8px}.r1>div{min-width:0}
+.mb.x{background:linear-gradient(135deg,#a3202f,#470d14);flex-direction:row;justify-content:center;border-color:#7a1f2c}.warn{color:#ff5d73;font-size:14px;text-align:center;line-height:1.4}
 .v{display:none}.v.on{display:block}
 </style></head><body><div class="w">
 <h1>⚙️ Admin panel</h1>
@@ -27,7 +28,9 @@ input{width:100%;background:#0c1030;border:1px solid var(--line);color:#fff;bord
   <button class="mb g" onclick="show('give')"><i>💰</i>Balans berish</button>
   <button class="mb o" onclick="show('promos')"><i>🎟</i>Promokodlar</button>
   <button class="mb p" onclick="show('conts')"><i>🏆</i>Konkurslar</button>
-  <button class="mb" onclick="location.href='/'"><i>🎮</i>O'yinga qaytish</button></div></div>
+  <button class="mb" onclick="location.href='/'"><i>🎮</i>O'yinga qaytish</button>
+  <button class="mb x" id="rs" style="grid-column:span 2" onclick="resetAll()"><i>🔄</i>Reset</button>
+  <p class="warn" style="grid-column:span 2">⚠️ Bu reset tugmasi botdagi hamma foydalanuvchining balansini va reytingini tozalaydi (balans 10 000 ga qaytadi). Ortga qaytarib bo'lmaydi!</p></div></div>
  <div class="v" id="v_stats"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>📊 Statistika</h2><div class="g2" id="st"></div></div>
  <div class="v" id="v_users"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>👥 Foydalanuvchilar</h2>
   <div style="display:flex;gap:8px"><input id="q" placeholder="🔍 ID yoki ism"><button class="act" style="height:46px" onclick="loadUsers()">Qidirish</button></div><div id="ul"></div></div>
@@ -57,5 +60,10 @@ async function loadConts(){const l=await api('contests');$('kl').innerHTML=l.map
 async function addK(){try{await api('contests','POST',{title:$('kt').value,prize:$('kp').value});loadConts()}catch(e){alert(e)}}
 async function draw(id){try{await api('contests/'+id+'/draw','POST');loadConts()}catch(e){alert(e)}}
 async function delK(id){await api('contests/'+id,'DELETE');loadConts()}
+let rsT=0;
+async function resetAll(){const b=$('rs');
+ if(!rsT){b.innerHTML='<i>❗</i>Tasdiqlash: yana bosing';rsT=setTimeout(()=>{rsT=0;b.innerHTML='<i>🔄</i>Reset'},5000);return}
+ clearTimeout(rsT);rsT=0;b.innerHTML='<i>🔄</i>Reset';
+ try{const r=await api('reset','POST');alert('✅ Reset bajarildi: '+r.users+' ta foydalanuvchi')}catch(e){alert(e)}}
 if(pw)$('pw').value=pw;if(pw||(tg&&tg.initData))login();
 </script></body></html>
