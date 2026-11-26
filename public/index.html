@@ -111,11 +111,14 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
 .pscene{position:relative;width:100%;aspect-ratio:1122/942;background:url(pvp_scene.jpg) center/100% 100% no-repeat;margin:2px 0 14px}
 .pscene .pw{position:absolute;left:22.9%;top:17.3%;width:54.2%;aspect-ratio:1;border-radius:50%;-webkit-mask:radial-gradient(circle closest-side,transparent 45%,#000 46%);mask:radial-gradient(circle closest-side,transparent 45%,#000 46%);background:conic-gradient(#1f6bff 0 180deg,#ff2233 180deg 360deg)}
 .pscene .hub{left:37.6%;top:34.8%;width:24.8%;transform:none;background:none;border:0;font-size:clamp(14px,5vw,26px);color:#fff;text-shadow:0 0 10px #000}
+
+.top{position:sticky;top:0;z-index:6;margin:-14px -14px 14px;padding:12px 14px;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #2a2a30}
+.top b{display:flex;align-items:center;gap:8px}.dm{height:26px;width:auto;flex:none}
 </style></head><body>
 <div id="toast"></div>
 <div id="err" style="display:none"></div>
 <div class="wrap">
-<div class="top"><div class="ava" id="ava">?</div><div><small>Balans</small><b>💎 <span id="bal">0</span> TON</b><div class="cap">o'yin tangalari · haqiqiy TON emas</div></div></div>
+<div class="top"><div class="ava" id="ava">?</div><div><small>Balans</small><b><img class="dm" src="diamond.png" alt=""><span id="bal">0</span></b><div class="cap">o'yin tangalari · haqiqiy TON emas</div></div></div>
 
 <section id="home" class="on">
  <div class="chips" id="hist1"></div>
