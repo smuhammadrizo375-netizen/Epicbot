@@ -32,6 +32,7 @@ input{width:100%;background:#0c1030;border:1px solid var(--line);color:#fff;bord
   <button class="mb im" style="background-image:url(a_promo.jpg)" onclick="show('promos')"><span class="lb">Promokodlar</span></button>
   <button class="mb im" style="background-image:url(a_conts.jpg)" onclick="show('conts')"><span class="lb">Konkurslar</span></button>
   <button class="mb im" style="background-image:url(a_game.jpg)" onclick="location.href='/'"><span class="lb">O'yinga qaytish</span></button>
+  <button class="mb" style="grid-column:span 2" onclick="show('subs')"><i>📢</i>Majburiy obuna</button>
   <button class="mb im rs" id="rs" style="grid-column:span 2;background-image:url(a_reset.jpg)" onclick="resetAll()"><span class="lb">Reset</span></button>
   <p class="warn" style="grid-column:span 2">⚠️ Bu reset tugmasi botdagi hamma foydalanuvchining balansini va reytingini tozalaydi (balans 10 000 ga qaytadi). Ortga qaytarib bo'lmaydi!</p></div></div>
  <div class="v" id="v_stats"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>📊 Statistika</h2><div class="g2" id="st"></div></div>
@@ -43,6 +44,7 @@ input{width:100%;background:#0c1030;border:1px solid var(--line);color:#fff;bord
   <input id="pc" placeholder="Kod"><input id="pa" type="number" placeholder="Summa"><input id="pu" type="number" placeholder="Necha kishiga"><button class="act" onclick="addP()">➕ Yaratish</button></div><div id="pl"></div></div>
  <div class="v" id="v_conts"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>🏆 Konkurslar</h2><div class="c">
   <input id="kt" placeholder="Nomi"><input id="kp" type="number" placeholder="Sovrin"><button class="act" onclick="addK()">➕ Yaratish</button></div><div id="kl"></div></div>
+<div class="v" id="v_subs"><button class="back" onclick="show('menu')">⬅️ Orqaga</button><h2>📢 Majburiy obuna</h2><div class="c"><input id="sc" placeholder="@kanal_username"><button class="act" onclick="addS()">➕ Qo'shish</button><small style="color:var(--mu)">Bot kanalda admin bo'lishi kerak. Obuna bo'lmaganlar stavka qila olmaydi.</small></div><div id="sl"></div></div>
 </div></div>
 <script>
 let pw=sessionStorage.pw||'';const $=i=>document.getElementById(i),n=v=>Math.floor(v).toLocaleString('ru');
@@ -50,7 +52,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const tg=window.Telegram&&Telegram.WebApp;if(tg){tg.ready();tg.expand()}
 const api=(p,m='GET',b)=>fetch('/api/admin/'+p,{method:m,headers:{'content-type':'application/json','x-admin':pw,'x-init':tg?tg.initData:''},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error;return j});
 async function login(){pw=$('pw').value||pw;try{await api('stats');sessionStorage.pw=pw;$('lg').style.display='none';$('app').style.display='block'}catch(e){alert(e)}}
-const L={stats:loadStats,users:loadUsers,promos:loadPromos,conts:loadConts};
+const L={stats:loadStats,users:loadUsers,promos:loadPromos,conts:loadConts,subs:loadSubs};
 function show(v){document.querySelectorAll('.v').forEach(x=>x.classList.toggle('on',x.id=='v_'+v));if(L[v])L[v]().catch(e=>alert(e))}
 async function loadStats(){const s=await api('stats');$('st').innerHTML=[['👥 Foydalanuvchilar',s.users],['💎 Jami balans',s.balance],['🎯 Stavkalar',s.bets],['📥 Jami stavka',s.wagered],['📤 To\'langan',s.paid],['🎟 Promokodlar',s.promos],['🏆 Konkurslar',s.contests]].map(x=>`<div class="c"><small>${x[0]}</small><b>${n(x[1])}</b></div>`).join('')}
 async function loadUsers(){const l=await api('users?q='+encodeURIComponent($('q').value));
@@ -69,4 +71,7 @@ async function resetAll(){const b=$('rs');
  clearTimeout(rsT);rsT=0;b.querySelector('.lb').textContent='Reset';
  try{const r=await api('reset','POST');alert('✅ Reset bajarildi: '+r.users+' ta foydalanuvchi')}catch(e){alert(e)}}
 if(pw)$('pw').value=pw;if(pw||(tg&&tg.initData))login();
+async function loadSubs(){const l=await api('channels');$('sl').innerHTML=l.map(c=>`<div class="c r1"><div><b>${esc(c.title)}</b><small>${esc(c.id)}</small></div><button class="act r" onclick="delS('${esc(c.id.slice(1))}')">🗑</button></div>`).join('')||'<p style="color:var(--mu)">Hozircha kanal yo\'q</p>'}
+async function addS(){try{await api('channels','POST',{channel:$('sc').value});$('sc').value='';loadSubs()}catch(e){alert(e)}}
+async function delS(i){await api('channels/'+i,'DELETE');loadSubs()}
 </script></body></html>
