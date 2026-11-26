@@ -98,6 +98,19 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
 .br.pw{box-shadow:0 0 24px #fff}.br.pd{opacity:.45}
 #subw{position:fixed;inset:0;background:#000e;z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
 #subw .mb2{width:100%;max-width:420px;background:#0e0c20;border:1px solid var(--line);border-radius:26px;padding:20px;text-align:center}
+
+.pcards{display:flex;justify-content:space-between;align-items:center;padding:5% 0 3%}
+.pcard{position:relative;width:48.5%;aspect-ratio:540/348;background-size:100% 100%;background-repeat:no-repeat;transition:transform .6s,filter .4s;color:#fff}
+#sb{transform-origin:left center}#sr{transform-origin:right center}
+.pcard .plate{position:absolute;top:40%;height:34%;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:14px}
+#sb .plate{left:50%;width:44%;background:linear-gradient(180deg,#0b2290,#06124a);border:1.5px solid #3b82f6;box-shadow:inset 0 0 14px #3b82f666}
+#sr .plate{left:52%;width:43%;background:linear-gradient(180deg,#8a0c20,#4a0612);border:1.5px solid #ef4444;box-shadow:inset 0 0 14px #ef444466}
+.pp{font-size:clamp(20px,7vw,34px);font-weight:700;line-height:1;text-shadow:0 0 12px #fff6}
+.pt{font-size:12px;opacity:.9;margin-top:2px}
+.pcard.w{filter:drop-shadow(0 0 16px #fff)}
+.pscene{position:relative;width:100%;aspect-ratio:1122/942;background:url(pvp_scene.jpg) center/100% 100% no-repeat;margin:2px 0 14px}
+.pscene .pw{position:absolute;left:22.9%;top:17.3%;width:54.2%;aspect-ratio:1;border-radius:50%;-webkit-mask:radial-gradient(circle closest-side,transparent 45%,#000 46%);mask:radial-gradient(circle closest-side,transparent 45%,#000 46%);background:conic-gradient(#1f6bff 0 180deg,#ff2233 180deg 360deg)}
+.pscene .hub{left:37.6%;top:34.8%;width:24.8%;transform:none;background:none;border:0;font-size:clamp(14px,5vw,26px);color:#fff;text-shadow:0 0 10px #000}
 </style></head><body>
 <div id="toast"></div>
 <div id="err" style="display:none"></div>
@@ -117,8 +130,9 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
 
 <section id="pvp">
  <div class="chips" id="ph"></div>
- <div class="pvs"><div class="side b" id="sb"><b>🔵 KO'K</b><span id="sbp">50%</span><small id="sbt">💎 0</small></div><div class="side r" id="sr"><b>🔴 QIZIL</b><span id="srp">50%</span><small id="srt">💎 0</small></div></div>
- <div class="wheelw"><div class="ptr"></div><div class="wheel" id="wh"></div><div class="hub" id="hub">…</div></div>
+ <div class="pcards"><div class="pcard" id="sb" style="background-image:url(pvp_blue.jpg)"><div class="plate"><span class="pp" id="sbp">50%</span><small class="pt" id="sbt">💎 0</small></div></div>
+  <div class="pcard" id="sr" style="background-image:url(pvp_red.jpg)"><div class="plate"><span class="pp" id="srp">50%</span><small class="pt" id="srt">💎 0</small></div></div></div>
+ <div class="pscene"><div class="pw" id="wh"></div><div class="hub" id="hub">…</div></div>
  <div class="panel"><div class="row"><input id="pamt" type="number" inputmode="numeric" value="1000" min="1000"><button class="q" onclick="$('pamt').value=1000">1k</button><button class="q" onclick="$('pamt').value=5000">5k</button><button class="q" onclick="$('pamt').value=bal">MAX</button></div>
   <div class="row" style="margin:0"><button class="go sb" id="pb1" onclick="pbet('blue')">🔵 Ko'k</button><button class="go sr" id="pb2" onclick="pbet('red')">🔴 Qizil</button></div></div>
  <h2 id="pbh" style="margin:16px 0 10px;font-size:18px"></h2><div class="blist" id="pbl"></div>
@@ -227,10 +241,10 @@ function spinTo(pt,el){const w=$('wh'),fin=360*6+(360-pt*360),dur=Math.max(0,PV.
  w.style.transition=`transform ${dur}ms cubic-bezier(.1,.6,.12,1)`;w.style.transform=`rotate(${fin}deg)`}
 async function pullP(){try{PV=await api('pvp');pSync=performance.now();setBal(PV.balance);
  const t=PV.blue+PV.red,bs=t?PV.blue/t:.5;
- $('sb').style.flex=Math.max(.25,bs)+' 1 0';$('sr').style.flex=Math.max(.25,1-bs)+' 1 0';
+ $('sb').style.transform='scale('+(.82+.36*bs)+')';$('sr').style.transform='scale('+(.82+.36*(1-bs))+')';
  $('sbp').textContent=Math.round(bs*100)+'%';$('srp').textContent=(t?100-Math.round(bs*100):50)+'%';
  $('sbt').textContent='💎 '+fmt(PV.blue);$('srt').textContent='💎 '+fmt(PV.red);
- $('wh').style.background=`conic-gradient(#3b82f6 0 ${bs*360}deg,#ef4444 ${bs*360}deg 360deg)`;
+ $('wh').style.background=`conic-gradient(#1f6bff 0 ${bs*360}deg,#ff2233 ${bs*360}deg 360deg)`;
  $('sb').classList.toggle('w',PV.winner=='blue');$('sr').classList.toggle('w',PV.winner=='red');
  if(PV.state=='bet'&&pPrev!='bet'){const w=$('wh');w.style.transition='none';w.style.transform='rotate(0deg)'}
  if(PV.state!='bet'&&pSpun!=PV.id){pSpun=PV.id;spinTo(PV.point,PV.state=='spin'?PV.spinMs-PV.spinLeft:PV.spinMs)}
