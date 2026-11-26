@@ -44,7 +44,7 @@ h2{font-size:22px;margin:4px 0 12px}
 @media(prefers-reduced-motion:reduce){.rocket.boom{animation:none;opacity:0}}
 
 html{background:#000}body{background:transparent}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:#000}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(bg.jpg) center/cover}
 .stage{background:radial-gradient(ellipse at 50% 100%,#3a1c7a77,transparent 65%)}
 .panel,.item,.chip{background:#12102acc}
 .ava{overflow:hidden}.ava img{width:100%;height:100%;object-fit:cover}.cap{font-size:11px;color:var(--mu)}
@@ -78,6 +78,26 @@ nav{background:#161618f2;border-top:1px solid #2a2a30;padding:8px 6px calc(8px +
 nav button{flex:1;min-width:0;padding:8px 2px;border-radius:20px;color:#8e8e93;font-size:11px;font-weight:600;gap:4px;line-height:1.1;white-space:nowrap}
 nav button svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
+
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cq{aspect-ratio:1;border-radius:24px;background:linear-gradient(160deg,#1c1740dd,#12102add);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;color:#fff;text-align:center}
+.cq i{font-style:normal;font-size:56px}.cq b{font-size:15px}.cq span{background:#7c5cff55;padding:4px 12px;border-radius:99px;font-size:14px;font-weight:700}
+.pvs{display:flex;gap:10px;margin-bottom:12px}
+.side{border-radius:20px;padding:12px;min-width:0;transition:flex .6s;display:flex;flex-direction:column;gap:2px;color:#fff}
+.side.b{background:linear-gradient(135deg,#3b82f6,#1d4ed8);box-shadow:0 0 18px #3b82f666}
+.side.r{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 0 18px #ef444466}
+.side.w{outline:3px solid #fff;box-shadow:0 0 30px #fff9}
+.side b{font-size:14px}.side span{font-size:28px;font-weight:700}
+.wheelw{position:relative;width:min(300px,78vw);aspect-ratio:1;margin:14px auto 18px}
+.wheel{position:absolute;inset:0;border-radius:50%;border:6px solid #1a1a2e;box-shadow:0 0 30px #7c5cff66,inset 0 0 20px #0008;background:conic-gradient(#3b82f6 0 180deg,#ef4444 180deg 360deg)}
+.ptr{position:absolute;left:50%;top:-14px;z-index:3;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:24px solid #fff;filter:drop-shadow(0 2px 4px #000)}
+.hub{position:absolute;left:50%;top:50%;width:40%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#0a0a14;border:4px solid #262d5a;display:grid;place-items:center;text-align:center;font-weight:700;z-index:2;font-size:20px;line-height:1.1}
+.go.sb{background:linear-gradient(90deg,#3b82f6,#1d4ed8);box-shadow:0 8px 24px #3b82f655}
+.go.sr{background:linear-gradient(90deg,#ef4444,#b91c1c);box-shadow:0 8px 24px #ef444455}
+.br.sred{background:linear-gradient(135deg,#ff6b6b,#d62839);border-color:#ffb3b3;box-shadow:0 0 14px #ef444477}
+.br.pw{box-shadow:0 0 24px #fff}.br.pd{opacity:.45}
+#subw{position:fixed;inset:0;background:#000e;z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
+#subw .mb2{width:100%;max-width:420px;background:#0e0c20;border:1px solid var(--line);border-radius:26px;padding:20px;text-align:center}
 </style></head><body>
 <div id="toast"></div>
 <div id="err" style="display:none"></div>
@@ -89,12 +109,20 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
  <button class="tile" onclick="go('crash')"><img class="bg" src="raketa.jpg" alt="">
   <span class="mxt" style="left:59.4%;top:18.6%;--r:30deg">x2.28</span><span class="mxt" style="left:92.3%;top:46.8%;--r:-25deg">x1.12</span>
   <span class="tag">🔥 HIT</span><span class="ttl">🚀 RAKETA</span></button>
- <button class="tile t2" onclick="toast('Tez orada')"><div class="pc solo">👑</div><div class="pc vs">VS</div>
+ <button class="tile t2" onclick="go('pvp')"><div class="pc solo">👑</div><div class="pc vs">VS</div>
   <img class="bg" src="pvp.jpg" alt="" onerror="this.remove()"><span class="tag">⚡ YANGI</span><span class="ttl">⚔️ PVP HUB</span></button>
  <button class="tile" onclick="toast('Tez orada')"><img class="bg" src="play.jpg" alt=""><span class="ttl">🎮 PLAY HUB</span></button>
  <button class="tile" onclick="go('cases')"><img class="bg" src="keys.jpg" alt=""><span class="tag">🎁 BEPUL</span><span class="ttl">🗝️ KEYSLAR</span></button>
 </section>
 
+<section id="pvp">
+ <div class="chips" id="ph"></div>
+ <div class="pvs"><div class="side b" id="sb"><b>🔵 KO'K</b><span id="sbp">50%</span><small id="sbt">💎 0</small></div><div class="side r" id="sr"><b>🔴 QIZIL</b><span id="srp">50%</span><small id="srt">💎 0</small></div></div>
+ <div class="wheelw"><div class="ptr"></div><div class="wheel" id="wh"></div><div class="hub" id="hub">…</div></div>
+ <div class="panel"><div class="row"><input id="pamt" type="number" inputmode="numeric" value="1000" min="1000"><button class="q" onclick="$('pamt').value=1000">1k</button><button class="q" onclick="$('pamt').value=5000">5k</button><button class="q" onclick="$('pamt').value=bal">MAX</button></div>
+  <div class="row" style="margin:0"><button class="go sb" id="pb1" onclick="pbet('blue')">🔵 Ko'k</button><button class="go sr" id="pb2" onclick="pbet('red')">🔴 Qizil</button></div></div>
+ <h2 id="pbh" style="margin:16px 0 10px;font-size:18px"></h2><div class="blist" id="pbl"></div>
+</section>
 <section id="crash">
  <div class="chips" id="hist2"></div>
  <div class="stage"><canvas id="stars"></canvas><div class="mx" id="mx">7.0</div><div class="msg" id="msg"></div><img class="rocket" id="rk" src="rocket.png" alt=""></div>
@@ -110,6 +138,7 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
  <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
  <h2 style="margin-top:18px">Konkurslar</h2><div id="cons"></div></section>
 </div>
+<div id="subw"><div class="mb2"><h2 style="margin:0 0 6px">📢 Obuna bo'ling</h2><p style="color:var(--mu);margin-bottom:12px">Davom etish uchun quyidagi kanallarga obuna bo'ling</p><div id="subl"></div><button class="go" style="margin-top:8px" onclick="checkSub()">✅ Tekshirish</button></div></div>
 <nav><button class="on" data-p="home"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-5.5h4v5.5h3.5a1 1 0 0 0 1-1V10"/></svg>Bosh sahifa</button><button data-p="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5a1 1 0 0 0-1 1c0 2.2 1.6 3.8 4 4M16 6h3a1 1 0 0 1 1 1c0 2.2-1.6 3.8-4 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg>Reyting</button><button data-p="rew"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2"/><rect x="9" y="2.5" width="6" height="4" rx="1"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></svg>Vazifalar</button><button data-p="cases"><svg viewBox="0 0 24 24"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7.5M12 8.5V21"/><path d="M12 8.5C10 8.5 7.5 8 7.5 6A2 2 0 0 1 9.5 4C11 4 12 6 12 8.5ZM12 8.5C14 8.5 16.5 8 16.5 6A2 2 0 0 0 14.5 4C13 4 12 6 12 8.5Z"/></svg>Keyslar</button><button id="adm" style="display:none" onclick="location.href='/admin.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Admin</button></nav>
 
 <script>
@@ -117,14 +146,14 @@ const tg=window.Telegram&&Telegram.WebApp,tu=tg&&tg.initDataUnsafe&&tg.initDataU
 if(tg){tg.ready();tg.expand()}
 let uid=tu?'tg'+tu.id:localStorage.uid||(localStorage.uid='g'+Math.random().toString(36).slice(2,10));
 const $=id=>document.getElementById(id),fmt=n=>Math.floor(n).toLocaleString('ru');
-const api=(p,b)=>fetch('/api/'+p,{method:b?'POST':'GET',headers:{'content-type':'application/json','x-uid':uid,'x-init':tg?tg.initData:''},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok)throw j.error||'Xato';return j});
+const api=(p,b)=>fetch('/api/'+p,{method:b?'POST':'GET',headers:{'content-type':'application/json','x-uid':uid,'x-init':tg?tg.initData:''},body:b?JSON.stringify(b):undefined}).then(async r=>{const j=await r.json();if(!r.ok){if(j.sub)checkSub();throw j.error||'Xato'}return j});
 let bal=0,state='idle',t0=0,poll=0,raf=0,lastM=1;
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)}
 function setBal(v){bal=v;$('bal').textContent=fmt(v)}
 function setA(v){$('amt').value=v||bal}
 function go(p){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==p));
- document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||((p=='crash'||p=='cases')&&b.dataset.p=='home')));
- if(p=='home'||p=='crash')hist();if(p=='crash'){pull();loop()}if(p=='cases')loadCases();if(p=='top')loadTop();if(p=='rew')loadRew()}
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||((p=='crash'||p=='cases'||p=='pvp')&&b.dataset.p=='home')));
+ if(p=='home'||p=='crash')hist();if(p=='crash'){pull();loop()}if(p=='pvp')pullP();if(p=='cases')loadCases();if(p=='top')loadTop();if(p=='rew')loadRew()}
 document.querySelectorAll('nav button[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
 const chipHTML=a=>a.map(x=>`<div class="chip" style="color:${mc(x)}">${x.toFixed(2)}x</div>`).join('');
 async function hist(){const h=await api('history');$('hist1').innerHTML=$('hist2').innerHTML=chipHTML(h)}
@@ -172,7 +201,7 @@ async function act(){const amt=Math.floor(+$('amt').value);$('btn').disabled=tru
 let CS=[],cur=null,spin=false;const WIN=40,pal=['#64748b','#3b82f6','#22c58b','#b36bff','#ffd23f'];
 const ric=(v,it)=>pal[Math.min(4,Math.floor(it.findIndex(x=>x.v==v)/it.length*5))];
 async function loadCases(){CS=await api('cases');$('cv').style.display='none';$('cl').style.display='block';
- $('cl').innerHTML=CS.map(c=>{const vs=c.items.map(i=>i.v);return `<div class="item" onclick="showCase('${c.id}')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:34px">${c.emoji}</span><div><b>${esc(c.name)}</b><small>💎 ${fmt(Math.min(...vs))} – ${fmt(Math.max(...vs))}</small></div></div><b>${c.price?'💎 '+fmt(c.price):'BEPUL'}</b></div>`}).join('')}
+ $('cl').innerHTML='<div class="cg2">'+CS.map(c=>`<button class="cq" onclick="showCase('${c.id}')"><i>${c.emoji}</i><b>${esc(c.name)}</b><span>${c.price?'💎 '+fmt(c.price):c.left>0?'⏳ '+left(c.left):'BEPUL'}</span></button>`).join('')+'</div>'}
 function showCase(id){cur=CS.find(c=>c.id==id);$('cl').style.display='none';$('cv').style.display='block';$('cvt').textContent=cur.emoji+' '+cur.name;$('cvr').textContent='';fillReel(null);
  $('cvp').innerHTML=cur.items.map(i=>`<div class="pz" style="border-color:${ric(i.v,cur.items)}">💎 ${fmt(i.v)}</div>`).join('');cvBtn()}
 function cvBtn(){const b=$('cvb');b.disabled=spin||(!cur.price&&cur.left>0);b.textContent=cur.price?'Ochish 💎 '+fmt(cur.price):cur.left>0?'⏳ '+left(cur.left):'🎁 Bepul ochish'}
@@ -187,11 +216,41 @@ async function openCase(){if(spin)return;spin=true;cvBtn();
   rl.getBoundingClientRect();rl.style.transition='transform 5.5s cubic-bezier(.12,.65,.12,1)';rl.style.transform=`translateX(${-x}px)`;
   setTimeout(()=>{setBal(r.balance);$('cvr').textContent='Tushdi: 💎 '+fmt(r.prize);toast('💎 '+fmt(r.prize));spin=false;if(!cur.price)cur.left=24*3600e3;cvBtn()},5700)}
  catch(e){toast(e);spin=false;cvBtn()}}
+/* ---- PVP ---- */
+let PV=null,pSync=0,pSpun=0,pPrev='',pList='';
+const prow=b=>{const d=PV.state=='done',w=d&&b.side==PV.winner;
+ return `<div class="br ${b.side=='red'?'sred':''}${b.me?' me':''}${d?(w?' pw':' pd'):''}"><div class="bav" ${b.photo?'':`style="background:${b.color||'#0004'}"`}>${b.photo?`<img src="${esc(b.photo)}" referrerpolicy="no-referrer" alt="">`:b.bot?'🤖':esc((b.name||'?')[0].toUpperCase())}</div>
+ <div class="bn"><b>${esc(b.name)}</b><small>${b.side=='red'?'🔴 Qizil':'🔵 Ko\'k'}</small></div><div class="bp">💎 ${fmt(w?b.win:b.amount)}</div></div>`};
+function spinTo(pt,el){const w=$('wh'),fin=360*6+(360-pt*360),dur=Math.max(0,PV.spinMs-el);
+ w.style.transition='none';w.style.transform='rotate(0deg)';w.getBoundingClientRect();
+ if(dur<300){w.style.transform=`rotate(${fin}deg)`;return}
+ w.style.transition=`transform ${dur}ms cubic-bezier(.1,.6,.12,1)`;w.style.transform=`rotate(${fin}deg)`}
+async function pullP(){try{PV=await api('pvp');pSync=performance.now();setBal(PV.balance);
+ const t=PV.blue+PV.red,bs=t?PV.blue/t:.5;
+ $('sb').style.flex=Math.max(.25,bs)+' 1 0';$('sr').style.flex=Math.max(.25,1-bs)+' 1 0';
+ $('sbp').textContent=Math.round(bs*100)+'%';$('srp').textContent=(t?100-Math.round(bs*100):50)+'%';
+ $('sbt').textContent='💎 '+fmt(PV.blue);$('srt').textContent='💎 '+fmt(PV.red);
+ $('wh').style.background=`conic-gradient(#3b82f6 0 ${bs*360}deg,#ef4444 ${bs*360}deg 360deg)`;
+ $('sb').classList.toggle('w',PV.winner=='blue');$('sr').classList.toggle('w',PV.winner=='red');
+ if(PV.state=='bet'&&pPrev!='bet'){const w=$('wh');w.style.transition='none';w.style.transform='rotate(0deg)'}
+ if(PV.state!='bet'&&pSpun!=PV.id){pSpun=PV.id;spinTo(PV.point,PV.state=='spin'?PV.spinMs-PV.spinLeft:PV.spinMs)}
+ pPrev=PV.state;
+ const m=PV.mine,can=PV.state=='bet';$('pb1').disabled=!can||(m&&m.side!='blue');$('pb2').disabled=!can||(m&&m.side!='red');
+ $('ph').innerHTML=PV.hist.map(x=>`<div class="chip">${x=='blue'?'🔵':'🔴'}</div>`).join('');
+ const l=PV.bets.map(prow).join('');if(l!==pList)$('pbl').innerHTML=pList=l;
+ $('pbh').textContent='Stavkalar: '+PV.count+' · jami 💎 '+fmt(t)}catch(e){}}
+function hubP(){if(!PV)return;const d=performance.now()-pSync,h=$('hub');
+ h.textContent=PV.state=='bet'?(PV.left==null?'Kutilmoqda':Math.max(0,(PV.left-d)/1000).toFixed(1)):PV.state=='spin'?'🎡':(PV.winner=='blue'?'🔵 Ko\'k yutdi':'🔴 Qizil yutdi')}
+async function pbet(side){try{const r=await api('pvp/bet',{side,amount:Math.floor(+$('pamt').value)});setBal(r.balance);pullP()}catch(e){toast(e)}}
+setInterval(()=>{if($('pvp').classList.contains('on'))pullP()},400);
+setInterval(()=>{if($('pvp').classList.contains('on'))hubP()},100);
+async function checkSub(){try{const r=await api('sub');if(r.ok){$('subw').style.display='none';return true}
+ $('subl').innerHTML=r.channels.map(c=>`<a class="btn2" style="display:block;margin:8px 0;text-decoration:none;color:#fff" href="${esc(c.url)}" target="_blank">📢 ${esc(c.title)}</a>`).join('');$('subw').style.display='flex';return false}catch(e){return true}}
 /* yulduzlar */
 (function(){const c=$('stars'),x=c.getContext('2d');let S=[];
  function size(){c.width=c.clientWidth;c.height=c.clientHeight;S=Array.from({length:60},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.6+.3,v:Math.random()*.25+.05}))}
  addEventListener('resize',size);size();
  (function f(){x.clearRect(0,0,c.width,c.height);x.fillStyle='#fff9';S.forEach(s=>{s.y+=s.v*(state=='run'?4:1);if(s.y>c.height)s.y=0;x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill()});requestAnimationFrame(f)})()})();
 
-(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').innerHTML=u.photo?'<img src="'+esc(u.photo)+'" referrerpolicy="no-referrer" alt="">':esc((u.name||'?')[0].toUpperCase());place(1);hist();$('err').style.display='none';api('is-admin').then(r=>{if(r.admin)$('adm').style.display='flex'}).catch(()=>{})}catch(e){const r=$('err');r.style.display='block';r.innerHTML='Ulanishda xato: '+esc(e)+' <button class="btn2" onclick="location.reload()">Qayta urinish</button>'}})();
+(async()=>{try{const u=await api('me',{name:tu?(tu.first_name||tu.username):'Player'});setBal(u.balance);$('ava').innerHTML=u.photo?'<img src="'+esc(u.photo)+'" referrerpolicy="no-referrer" alt="">':esc((u.name||'?')[0].toUpperCase());place(1);hist();checkSub();$('err').style.display='none';api('is-admin').then(r=>{if(r.admin)$('adm').style.display='flex'}).catch(()=>{})}catch(e){const r=$('err');r.style.display='block';r.innerHTML='Ulanishda xato: '+esc(e)+' <button class="btn2" onclick="location.reload()">Qayta urinish</button>'}})();
 </script></body></html>
