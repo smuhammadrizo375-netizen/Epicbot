@@ -45,12 +45,23 @@ async function subStatus(u){const chs=db.channels||[];
   if(ok)subCache.set(u.id,{t:Date.now(),r});return r}
 const needSub=async(q,s,n)=>{try{const r=await subStatus(q.u);if(r.ok)return n();s.status(403).json({error:'Avval kanallarga obuna bo\'ling',sub:true})}catch(e){n()}};
 app.get('/api/sub',auth,async(q,s)=>s.json(await subStatus(q.u)));
+// ---------- REFERAL ----------
+db.refs=db.refs||{};db.settings=db.settings||{};if(db.settings.refReward==null)db.settings.refReward=5000;
+let BOTNAME=process.env.BOT_USERNAME||'';
+function regRef(m){const p=(m.text.split(' ')[1]||'');if(!p.startsWith('ref_')||!m.from)return;
+  const r=p.slice(4).replace(/\D/g,''),me=String(m.from.id);
+  if(r&&r!==me&&!db.refs[me]&&!db.users['tg'+me]){db.refs[me]=r;save()}}   // faqat yangi foydalanuvchi uchun
+function refReward(u){u.refPaid=true;const rid=u.tg&&db.refs[u.tg],inv=rid&&db.users['tg'+rid];
+  if(inv&&inv.id!==u.id){const v=db.settings.refReward;inv.balance+=v;inv.refCount=(inv.refCount||0)+1;inv.refEarned=(inv.refEarned||0)+v;db.stats.paid+=v}}
+app.get('/api/ref',auth,(q,s)=>{const u=q.u;s.json({link:BOTNAME&&u.tg?`https://t.me/${BOTNAME}?start=ref_${u.tg}`:null,reward:db.settings.refReward,count:u.refCount||0,earned:u.refEarned||0})});
 // Telegram bot (webhook)
 const TGURL=process.env.WEBAPP_URL||process.env.RENDER_EXTERNAL_URL,WH=crypto.createHash('sha256').update(TOKEN).digest('hex').slice(0,32);
 const tgApi=(m,b)=>fetch(`https://api.telegram.org/bot${TOKEN}/${m}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json());
 if(TOKEN&&TGURL){
+  tgApi('getMe',{}).then(r=>{if(r.ok&&!BOTNAME)BOTNAME=r.result.username}).catch(()=>{});
   const esc=x=>String(x||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   app.post('/tg/'+WH,(q,s)=>{s.sendStatus(200);const m=q.body.message;
+    if(m&&m.text&&m.text.startsWith('/start'))regRef(m);
     if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,parse_mode:'HTML',
       text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b> ✨\n\n🚀 Bu <b>epic fake bot</b> 🎮\n\nO'ynash uchun pastdagi tugmani bosing 👇`,
       reply_markup:{inline_keyboard:[[{text:'🚀 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
@@ -170,7 +181,7 @@ app.post('/api/cases/open',auth,needSub,(q,s)=>{const c=CASES.find(x=>x.id===q.b
   else if(u.balance<c.price)return s.status(400).json({error:'Balans yetarli emas'});
   let r=Math.random()*c.items.reduce((a,i)=>a+i[1],0),prize=c.items[0][0];
   for(const [v,w] of c.items){if((r-=w)<0){prize=v;break}}
-  if(c.price)u.balance-=c.price;else u.caseAt=Date.now();u.balance+=prize;save();s.json({prize,balance:u.balance})});
+  if(c.price)u.balance-=c.price;else{if(!u.refPaid)refReward(u);u.caseAt=Date.now()}u.balance+=prize;save();s.json({prize,balance:u.balance})});
 
 // ---------- ADMIN ----------
 const A='/api/admin';
@@ -214,5 +225,10 @@ app.post(A+'/channels',adm,async(q,s)=>{let id=String(q.body.channel||'').trim()
   if(!t||!t.ok||!['administrator','creator'].includes(t.result.status))return s.status(400).json({error:'Avval botni kanalga admin qiling'});
   db.channels.push({id,title:c.result.title||id});subCache.clear();save();s.json({ok:1})});
 app.delete(A+'/channels/:id',adm,(q,s)=>{db.channels=db.channels.filter(c=>c.id!=='@'+q.params.id);subCache.clear();save();s.json({ok:1})});
+
+// ---------- ADMIN: SOZLAMALAR ----------
+app.get(A+'/settings',adm,(q,s)=>s.json(db.settings));
+app.post(A+'/settings',adm,(q,s)=>{const v=Math.floor(+q.body.refReward);if(!(v>=0&&v<=1e9))return s.status(400).json({error:'Noto\'g\'ri qiymat'});
+  db.settings.refReward=v;save();s.json(db.settings)});
 
 app.listen(process.env.PORT||3000,()=>console.log('epic_bot ishga tushdi'));
