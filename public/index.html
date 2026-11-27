@@ -114,6 +114,25 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
 
 .top{position:sticky;top:0;z-index:6;margin:-14px -14px 14px;padding:12px 14px;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #2a2a30}
 .top b{display:flex;align-items:center;gap:8px}.dm{height:26px;width:auto;flex:none}
+
+.udial{position:relative;width:min(340px,92vw);aspect-ratio:1;margin:4px auto 14px}
+.udial svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 14px #7c3aed88)}
+.uring{fill:none;stroke:#8b5cf6;stroke-width:2.5}.tk{stroke:#a78bfa88;stroke-width:1.6}.tk.big{stroke:#c4b5fd;stroke-width:2.4}
+.utrack{fill:none;stroke:#140c2e;stroke-width:36}.uarc{fill:none;stroke:url(#ug);stroke-width:36;filter:drop-shadow(0 0 8px #8b5cf6)}
+.ulb{fill:#fff;font:700 13px Fredoka,sans-serif;text-anchor:middle}
+#uneedle{transform-origin:150px 150px}
+.uctr{position:absolute;inset:26%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:50%;background:radial-gradient(circle,#0b0620,#12082e);border:1px solid #3b1d8a}
+.up1{font-size:34px;font-weight:700;color:#c4b5fd;line-height:1.1}.up2{font-size:13px;color:#a78bfa;padding:0 10px;line-height:1.2}
+.ucards{display:flex;gap:12px;position:relative;margin-bottom:10px}
+.ucard{flex:1;min-width:0;border:1.5px solid #6d3df0;border-radius:22px;background:linear-gradient(160deg,#1a0f3dcc,#0e0824cc);padding:14px 10px;text-align:center;box-shadow:0 0 18px #6d3df044}
+.ucard b{display:block;color:#a78bfa;font-size:19px;margin-bottom:8px}
+.ucard input{width:100%;text-align:center;font-size:20px;padding:10px 4px;background:#0a0618;border-color:#3b1d8a}
+.ucard small{display:block;margin-top:8px;color:#8b92c4;font-size:12px}
+.uarrow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#5b21b6);display:grid;place-items:center;font-size:20px;border:4px solid #0a0618;z-index:2}
+.uchips{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
+.uchips button{padding:10px 0;border-radius:12px;background:#120a2acc;border:1px solid #3b1d8a;color:#c4b5fd;font-weight:700;font-size:13px}
+.ubtn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:22px;border:2px solid #8b5cf6;background:linear-gradient(90deg,#2a1070,#4c1d95 50%,#2a1070);color:#fff;font-size:18px;font-weight:700;box-shadow:0 0 24px #7c3aed66}
+.ubtn span{opacity:.5}.ubtn:disabled{opacity:.55}
 </style></head><body>
 <div id="toast"></div>
 <div id="err" style="display:none"></div>
@@ -127,7 +146,7 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
   <span class="tag">🔥 HIT</span><span class="ttl">🚀 RAKETA</span></button>
  <button class="tile t2" onclick="go('pvp')"><div class="pc solo">👑</div><div class="pc vs">VS</div>
   <img class="bg" src="pvp.jpg" alt="" onerror="this.remove()"><span class="tag">⚡ YANGI</span><span class="ttl">⚔️ PVP HUB</span></button>
- <button class="tile" onclick="toast('Tez orada')"><img class="bg" src="play.jpg" alt=""><span class="ttl">🎮 PLAY HUB</span></button>
+ <button class="tile" onclick="go('upgrade')"><img class="bg" src="play.jpg" alt=""><span class="tag">⬆️ YANGI</span><span class="ttl">⬆️ UPGRADE</span></button>
  <button class="tile" onclick="go('cases')"><img class="bg" src="keys.jpg" alt=""><span class="tag">🎁 BEPUL</span><span class="ttl">🗝️ KEYSLAR</span></button>
 </section>
 
@@ -156,6 +175,17 @@ nav button.on{background:#7f6fe0;color:#fff;box-shadow:0 0 22px #7f6fe055}
   <button class="go" onclick="shareRef()">📤 Do'stlarga ulashish</button>
   <p id="iv_t" style="margin-top:14px;color:#ffd23f;font-size:15px;text-align:center"></p>
   <p id="iv_s" style="margin-top:8px;color:var(--mu);font-size:13px;text-align:center"></p></div></section>
+<section id="upgrade">
+ <div class="udial"><svg viewBox="0 0 300 300"><defs><linearGradient id="ug" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b79cff"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs>
+  <circle cx="150" cy="150" r="143" class="uring"/><g id="uticks"></g><circle cx="150" cy="150" r="105" class="utrack"/><path id="uarc" class="uarc" d=""/>
+  <text x="150" y="55" class="ulb">100</text><text x="46" y="155" class="ulb">50</text><text x="254" y="155" class="ulb">50</text><text x="150" y="260" class="ulb">0</text>
+  <g id="uneedle"><path d="M150 4 L142 38 L158 38 Z" fill="#d8ccff"/></g></svg><div class="uctr" id="uctr"></div></div>
+ <div class="ucards"><div class="ucard"><b>Stavka</b><input id="us" type="number" inputmode="numeric" value="1000" oninput="upIn()"><small>Balansingizdan</small></div>
+  <div class="uarrow">➜</div>
+  <div class="ucard"><b>Maqsad</b><input id="ut" type="number" inputmode="numeric" value="2000" oninput="upIn()"><small>Stavkadan baland</small></div></div>
+ <div class="uchips"><button onclick="upPreset(0,2)">X2</button><button onclick="upPreset(0,4)">X4</button><button onclick="upPreset(0,8)">X8</button><button onclick="upPreset(1,35)">35%</button><button onclick="upPreset(1,55)">55%</button><button onclick="upPreset(1,75)">75%</button></div>
+ <button class="ubtn" id="ubtn" onclick="upGo()"><span>👑</span><b id="ubt">Yaxshilash</b><span>👑</span></button>
+</section>
 <section id="top"><h2>Reyting</h2><div id="toplist"></div></section>
 <section id="rew"><h2>Vazifalar</h2><div id="tasks"></div><h2 style="margin-top:18px">Promokod</h2>
  <div class="panel" style="margin-bottom:14px"><div class="row" style="margin:0"><input id="pc" placeholder="Promokod" style="text-transform:uppercase"><button class="btn2" onclick="promo()">Olish</button></div></div>
@@ -175,8 +205,8 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTi
 function setBal(v){bal=v;$('bal').textContent=fmt(v)}
 function setA(v){$('amt').value=v||bal}
 function go(p){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==p));
- document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||((p=='crash'||p=='cases'||p=='pvp')&&b.dataset.p=='home')));
- if(p=='home'||p=='crash')hist();if(p=='crash'){pull();loop()}if(p=='pvp')pullP();if(p=='invite')loadInvite();if(p=='cases')loadCases();if(p=='top')loadTop();if(p=='rew')loadRew()}
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p==p||((p=='crash'||p=='cases'||p=='pvp'||p=='upgrade')&&b.dataset.p=='home')));
+ if(p=='home'||p=='crash')hist();if(p=='crash'){pull();loop()}if(p=='pvp')pullP();if(p=='upgrade')upRender();if(p=='invite')loadInvite();if(p=='cases')loadCases();if(p=='top')loadTop();if(p=='rew')loadRew()}
 document.querySelectorAll('nav button[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
 const chipHTML=a=>a.map(x=>`<div class="chip" style="color:${mc(x)}">${x.toFixed(2)}x</div>`).join('');
 async function hist(){const h=await api('history');$('hist1').innerHTML=$('hist2').innerHTML=chipHTML(h)}
@@ -277,6 +307,27 @@ function copyRef(){const v=$('iv_l').value;if(navigator.clipboard)navigator.clip
 function shareRef(){const l=$('iv_l').value;if(l.indexOf('http')!==0)return toast('Havola tayyor emas');
  const u='https://t.me/share/url?url='+encodeURIComponent(l)+'&text='+encodeURIComponent('🚀 Epic fake bot! Kir va bepul keysni och 🎁');
  if(tg&&tg.openTelegramLink)tg.openTelegramLink(u);else window.open(u,'_blank')}
+/* ---- Upgrade ---- */
+let upAng=0,upBusy=false,upRes=false;
+(function(){let t='';for(let i=0;i<72;i++){const a=i*5*Math.PI/180,r1=i%6?131:127,r2=137,sn=Math.sin(a),cs=-Math.cos(a);
+ t+=`<line x1="${150+r1*sn}" y1="${150+r1*cs}" x2="${150+r2*sn}" y2="${150+r2*cs}" class="${i%6?'tk':'tk big'}"/>`}$('uticks').innerHTML=t})();
+function arcPath(c){const th=c*360;if(th<1)return'';const r=105,p=a=>[150+r*Math.sin(a),150-r*Math.cos(a)],a1=(180-th/2)*Math.PI/180,a2=(180+th/2)*Math.PI/180,[x1,y1]=p(a1),[x2,y2]=p(a2);
+ return `M${x1} ${y1} A${r} ${r} 0 ${th>180?1:0} 1 ${x2} ${y2}`}
+function upIn(){upRes=false;upRender()}
+function upRender(){const s=+$('us').value,t=+$('ut').value,ok=s>=1000&&t>=Math.ceil(s*1.05)&&t<=s*100&&s<=bal,c=s>0&&t>s?s/t:0;
+ $('uarc').setAttribute('d',arcPath(c));
+ if(!upBusy&&!upRes)$('uctr').innerHTML=c?`<div class="up1">${(c*100).toFixed(c<.1?1:0)}%</div><div class="up2">x${(t/s).toFixed(2)}</div>`:'<div class="up2">Stavka va maqsadni kiriting</div>';
+ $('ubtn').disabled=!ok||upBusy;$('ubt').textContent=upBusy?'…':ok?'Yaxshilash':s>bal?'Balans yetarli emas':'Stavka va maqsadni kiriting'}
+function upPreset(k,v){const s=+$('us').value||1000;$('ut').value=k?Math.round(s/(v/100)):s*v;upIn()}
+async function upGo(){const st=Math.floor(+$('us').value),tg=Math.floor(+$('ut').value);upBusy=true;upRes=false;upRender();
+ try{const r=await api('upgrade',{stake:st,target:tg}),n=$('uneedle');
+  n.style.transition='none';n.style.transform=`rotate(${upAng%360}deg)`;n.getBoundingClientRect();
+  upAng=360*5+r.angle;n.style.transition='transform 4.5s cubic-bezier(.12,.6,.1,1)';n.style.transform=`rotate(${upAng}deg)`;
+  $('uctr').innerHTML='<div class="up2">Aylanmoqda…</div>';
+  setTimeout(()=>{setBal(r.balance);upBusy=false;upRes=true;
+   $('uctr').innerHTML=r.win?`<div class="up1" style="color:#3ddc97">+${fmt(r.target)}</div><div class="up2">Yutdingiz!</div>`:`<div class="up1" style="color:#ff5d73">✖</div><div class="up2">Omad kelmadi</div>`;
+   toast(r.win?'🎉 Yutdingiz!':'Omad kelmadi');upRender()},4700)}
+ catch(e){upBusy=false;toast(e);upRender()}}
 /* yulduzlar */
 (function(){const c=$('stars'),x=c.getContext('2d');let S=[];
  function size(){c.width=c.clientWidth;c.height=c.clientHeight;S=Array.from({length:60},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.6+.3,v:Math.random()*.25+.05}))}
