@@ -167,6 +167,18 @@ app.post('/api/pvp/bet',auth,needSub,(q,s)=>{const u=q.u,a=Math.floor(+q.body.am
   u.balance-=a;if(!x)u.games++;db.stats.bets++;db.stats.wagered+=a;pvpAdd(u.id,{name:u.name,photo:u.photo,side,amount:a});save();
   s.json({balance:u.balance})});
 
+// ---------- UPGRADE ----------
+// stavka -> maqsad: yutish ehtimoli = stavka / maqsad (maqsad qancha baland bo'lsa, foiz shuncha kam)
+app.post('/api/upgrade',auth,needSub,(q,s)=>{const u=q.u,st=Math.floor(+q.body.stake),tg=Math.floor(+q.body.target);
+  if(!(st>=MIN))return s.status(400).json({error:`Minimal stavka ${MIN}`});
+  if(st>u.balance)return s.status(400).json({error:'Balans yetarli emas'});
+  if(!(tg>=Math.ceil(st*1.05)&&tg<=st*100))return s.status(400).json({error:'Maqsad stavkadan 1.05 baravardan 100 baravargacha bo\'lishi kerak'});
+  const ch=st/tg,win=crypto.randomInt(0,1e6)/1e6<ch,k=Math.random(),half=ch*180;
+  // milya burchagi: yutuq yoyi pastki markazda (180°), yoy kengligi = ehtimol * 360°
+  const ang=win?180+(k-.5)*2*half*.9:(180+half+k*(360-2*half))%360;
+  u.balance-=st;u.games++;db.stats.bets++;db.stats.wagered+=st;if(win){u.balance+=tg;db.stats.paid+=tg}save();
+  s.json({win,chance:ch,angle:(ang+360)%360,balance:u.balance,target:tg})});
+
 // ---------- KEYSLAR ----------
 const MULTS=[[0.1,20],[0.3,25],[0.6,20],[0.9,5],[1.2,14],[1.5,9],[3,5],[10,2]];   // 70% holatda narxdan kam tushadi
 const PRICES=[500,1000,2500,5000,7500,10000,15000,25000,40000,60000,100000,150000,250000,500000];
