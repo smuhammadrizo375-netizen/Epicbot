@@ -230,6 +230,7 @@ async function promo(){try{const r=await api('promo',{code:$('pc').value});setBa
 
 /* ---- Keys rasmlari (keys_sheet.jpg dan kesim) ---- */
 const KS={W:1024,H:1536},RK={free:[32,84,348,355],c500:[355,84,672,355],c1000:[678,84,995,355],c2500:[32,341,348,620],c5000:[355,341,672,620],c7500:[678,341,995,620],c8000:[32,606,348,895],c40000:[355,606,672,895],c60000:[678,606,995,895],c100000:[32,884,348,1178],c150000:[355,884,672,1178],c250000:[678,884,995,1178],c500000:[230,1164,793,1460]};
+let KOFF=false;{const i=new Image();i.onerror=()=>{KOFF=true};i.src='keys_sheet.jpg'}   // rasm topilmasa oddiy kartalar ko'rsatiladi
 function ktile(id){const r=RK[id];if(!r)return null;const w=r[2]-r[0],hh=r[3]-r[1];
  return `aspect-ratio:${w}/${hh};background-image:url(keys_sheet.jpg);background-size:${KS.W/w*100}% ${KS.H/hh*100}%;background-position:${r[0]/(KS.W-w)*100}% ${r[1]/(KS.H-hh)*100}%`}
 /* ---- Umumiy raund ---- */
@@ -264,7 +265,7 @@ async function act(){const amt=Math.floor(+$('amt').value);$('btn').disabled=tru
 let CS=[],cur=null,spin=false;const WIN=40,pal=['#64748b','#3b82f6','#22c58b','#b36bff','#ffd23f'];
 const ric=(v,it)=>pal[Math.min(4,Math.floor(it.findIndex(x=>x.v==v)/it.length*5))];
 async function loadCases(){CS=await api('cases');$('cv').style.display='none';$('cl').style.display='block';
- $('cl').innerHTML='<div class="cg2">'+CS.map(c=>{const st=ktile(c.id),w=!c.price&&c.left>0;
+ $('cl').innerHTML='<div class="cg2">'+CS.map(c=>{const st=KOFF?null:ktile(c.id),w=!c.price&&c.left>0;
  return st?`<button class="ck${c.id=='c500000'?' ck-last':''}${w?' ckw':''}" style="${st}" onclick="showCase('${c.id}')" aria-label="${esc(c.name)}">${w?`<span class="ckt">⏳ ${left(c.left)}</span>`:''}</button>`
  :`<button class="cq" onclick="showCase('${c.id}')"><i>${c.emoji}</i><b>${esc(c.name)}</b><span>${c.price?'💎 '+fmt(c.price):'BEPUL'}</span></button>`}).join('')+'</div>'}
 function showCase(id){cur=CS.find(c=>c.id==id);$('cl').style.display='none';$('cv').style.display='block';$('cvt').textContent=cur.emoji+' '+cur.name;$('cvr').textContent='';fillReel(null);
