@@ -63,7 +63,7 @@ if(TOKEN&&TGURL){
   app.post('/tg/'+WH,(q,s)=>{s.sendStatus(200);const m=q.body.message;
     if(m&&m.text&&m.text.startsWith('/start'))regRef(m);
     if(m&&m.text&&m.text.startsWith('/start'))tgApi('sendMessage',{chat_id:m.chat.id,parse_mode:'HTML',
-      text:`👋 Salom, <b>${esc(m.from&&m.from.first_name)}</b> ✨\n\n🚀 Bu <b>epic fake bot</b> 🎮\n\nO'ynash uchun pastdagi tugmani bosing 👇`,
+      text:`🌙 Assalomu alaykum <b>${esc(m.from&&m.from.first_name)}</b> ✨\n\n🚀 Botimizdan foydalanish uchun bosing 👇`,
       reply_markup:{inline_keyboard:[[{text:'🚀 O\'ynash',web_app:{url:TGURL}}]]}}).catch(()=>{})});
   tgApi('setWebhook',{url:TGURL+'/tg/'+WH}).then(r=>console.log('webhook',r.ok)).catch(console.error);
   tgApi('setMyCommands',{commands:[{command:'start',description:'O\'yinni boshlash'}]}).catch(()=>{});
@@ -181,8 +181,8 @@ app.post('/api/upgrade',auth,needSub,(q,s)=>{const u=q.u,st=Math.floor(+q.body.s
 
 // ---------- KEYSLAR ----------
 const MULTS=[[0.1,20],[0.3,25],[0.6,20],[0.9,5],[1.2,14],[1.5,9],[3,5],[10,2]];   // 70% holatda narxdan kam tushadi
-const PRICES=[500,1000,2500,5000,7500,10000,15000,25000,40000,60000,100000,150000,250000,500000];
-const CNAMES=['Mini','Oddiy','Bronza','Kumush','Oltin','Platina','Olmos','Rubin','Zumrad','Safir','Kristal','Titan','Legend','Imperator'];
+const PRICES=[500,1000,2500,5000,7500,8000,40000,60000,100000,150000,250000,500000];
+const CNAMES=['Mini','Oddiy','Bronza','Kumush','Oltin','Rubin','Zumrad','Safir','Kristal','Titan','Legend','Imperator'];
 const CASES=[{id:'free',name:'Kunlik bepul keys',emoji:'💎',price:0,items:[[100,50],[250,25],[500,15],[1000,8],[5000,2]]},
  ...PRICES.map((p,i)=>({id:'c'+p,name:CNAMES[i]+' keys',emoji:'💎',price:p,items:MULTS.map(([m,w])=>[Math.round(p*m),w])}))];
 const DAY=24*3600e3;
